@@ -10,7 +10,8 @@
     "WitherBossMixin",
     "ZombieMixin",
     "CubeMobMixin",
-    "CubeSpawnMixin"
+    "CubeSpawnMixin",
+    "RavagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
