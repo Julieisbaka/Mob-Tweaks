@@ -15,11 +15,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Raid.class)
 abstract class RaidMixin {
-    public RaidMixin() {
-        super();
-        //TODO Auto-generated constructor stub
-    }
-
     @Shadow
     private int groupsSpawned;
 
