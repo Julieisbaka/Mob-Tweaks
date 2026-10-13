@@ -3,6 +3,7 @@ package org.julieisbaka.mobtweaks.mixin;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,11 +15,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.julieisbaka.mobtweaks.WitherDashGoal;
+import org.julieisbaka.mobtweaks.WitherBirthExplosionCalculator;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -48,6 +52,14 @@ abstract class WitherBossMixin extends Monster {
             target = "Lnet/minecraft/world/entity/boss/wither/WitherBoss;heal(F)V", ordinal = 0), index = 0)
     private float mobTweaks$scaleSpawnChargeHealing(float amount) {
         return amount * this.getMaxHealth() / 300.0F;
+    }
+
+    @Redirect(method = "customServerAiStep", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/server/level/ServerLevel;explode(Lnet/minecraft/world/entity/Entity;DDDFZLnet/minecraft/world/level/Level$ExplosionInteraction;)V"))
+    private void mobTweaks$birthExplosionDamage(ServerLevel level, Entity source, double x, double y, double z,
+                                                float radius, boolean fire, Level.ExplosionInteraction interaction) {
+        level.explode(source, null, new WitherBirthExplosionCalculator(source),
+                new Vec3(x, y, z), radius, fire, interaction);
     }
 
     @Inject(method = "registerGoals", at = @At("TAIL"))

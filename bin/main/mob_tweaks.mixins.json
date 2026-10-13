@@ -8,7 +8,9 @@
     "DyeItemMixin",
     "VillagerMixin",
     "WitherBossMixin",
-    "ZombieMixin"
+    "ZombieMixin",
+    "CubeMobMixin",
+    "CubeSpawnMixin"
   ],
   "injectors": {
     "defaultRequire": 1
