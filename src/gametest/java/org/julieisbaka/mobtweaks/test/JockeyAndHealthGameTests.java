@@ -1,8 +1,11 @@
 package org.julieisbaka.mobtweaks.test;
 
+import static org.julieisbaka.mobtweaks.test.AdditionalMobGameTests.createMob;
+import static org.julieisbaka.mobtweaks.test.AdditionalMobGameTests.load;
+import static org.julieisbaka.mobtweaks.test.AdditionalMobGameTests.save;
+
 import java.util.List;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
-import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.ProblemReporter;
@@ -17,7 +20,6 @@ import net.minecraft.world.entity.animal.feline.Cat;
 import net.minecraft.world.entity.animal.wolf.Wolf;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.zombie.Zombie;
-import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
 import org.julieisbaka.mobtweaks.ZombieJockeyGoal;
 import org.julieisbaka.mobtweaks.test.mixin.WitherBossAccessor;
@@ -41,6 +43,12 @@ public class JockeyAndHealthGameTests {
                 wither.makeInvulnerable();
                 helper.assertTrue(wither.getHealth() == expected / 3 && wither.getInvulnerableTicks() == 220,
                         "Built wither spawn charging must use scaled health");
+                for (int tick = 1; tick <= 220; tick++) {
+                    wither.tickCount = tick;
+                    ((WitherBossAccessor) wither).mobTweaks$serverAiStep(helper.getLevel());
+                }
+                helper.assertTrue(wither.getHealth() == expected && wither.getInvulnerableTicks() == 0,
+                        "Built wither must finish its charge at full difficulty-scaled health");
             }
         } finally {
             setDifficulty(helper, original);
@@ -286,6 +294,58 @@ public class JockeyAndHealthGameTests {
         helper.succeed();
     }
 
+    @GameTest
+    public void realZombieAiMountsNearbyCow(GameTestHelper helper) {
+        Zombie baby = eligibleBaby(helper);
+        Mob cow = createMob(helper, EntityTypes.COW);
+        helper.getLevel().addFreshEntity(cow);
+        baby.aiStep();
+        helper.assertTrue(baby.getVehicle() == cow, "Normal zombie AI must start the jockey goal and mount");
+        baby.stopRiding();
+        ZombieJockeyGoal goal = ((ZombieAccessor) baby).mobTweaks$getJockeyGoal();
+        goal.stop();
+        cow.discard();
+        helper.succeed();
+    }
+
+    @GameTest
+    public void approachingBabyStopsIfMountBecomesInvalid(GameTestHelper helper) {
+        Zombie baby = eligibleBaby(helper);
+        Mob cow = createMob(helper, EntityTypes.COW);
+        cow.setPos(baby.getX() + 3, baby.getY(), baby.getZ());
+        helper.getLevel().addFreshEntity(cow);
+        ZombieJockeyGoal goal = ((ZombieAccessor) baby).mobTweaks$getJockeyGoal();
+        helper.assertTrue(goal.canUse(), "Must find a mount within search range");
+        goal.start();
+        helper.assertTrue(!baby.isPassenger() && goal.canContinueToUse(), "Distant mount must require approaching");
+        cow.setHealth(0);
+        helper.assertTrue(!goal.canContinueToUse(), "Approach must stop if the mount dies");
+        goal.stop();
+        cow.discard();
+        helper.succeed();
+    }
+
+    @GameTest
+    public void jockeyMountRelationshipIsSerialized(GameTestHelper helper) {
+        Zombie baby = eligibleBaby(helper);
+        Mob cow = createMob(helper, EntityTypes.COW);
+        helper.getLevel().addFreshEntity(cow);
+        ZombieJockeyGoal goal = ((ZombieAccessor) baby).mobTweaks$getJockeyGoal();
+        helper.assertTrue(goal.canUse(), "Baby must find cow");
+        goal.start();
+        CompoundTag mountData = save(helper, cow);
+        helper.assertTrue(mountData.getListOrEmpty("Passengers").size() == 1,
+                "Mount save must include its baby zombie passenger");
+        CompoundTag passenger = mountData.getListOrEmpty("Passengers").getCompoundOrEmpty(0);
+        helper.assertTrue(passenger.getBooleanOr("MobTweaksJockeyEligible", false)
+                        && passenger.getBooleanOr("IsBaby", false),
+                "Saved passenger must retain baby status and jockey eligibility");
+        baby.stopRiding();
+        goal.stop();
+        cow.discard();
+        helper.succeed();
+    }
+
     private static List<EntityType<? extends Zombie>> zombieTypes() {
         return List.of(EntityTypes.ZOMBIE, EntityTypes.HUSK, EntityTypes.DROWNED,
                 EntityTypes.ZOMBIE_VILLAGER, EntityTypes.ZOMBIFIED_PIGLIN);
@@ -310,36 +370,12 @@ public class JockeyAndHealthGameTests {
         return zombie;
     }
 
-    private static <T extends Mob> T createMob(GameTestHelper helper, EntityType<T> type) {
-        T mob = type.create(helper.getLevel(), EntitySpawnReason.COMMAND);
-        if (mob == null) {
-            throw new IllegalStateException("Cannot create test mob " + type);
-        }
-        BlockPos pos = helper.absolutePos(new BlockPos(3, 3, 3));
-        mob.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-        return mob;
-    }
-
-    private static CompoundTag save(GameTestHelper helper, Mob mob) {
-        ProblemReporter.Collector reporter = new ProblemReporter.Collector();
-        TagValueOutput output = TagValueOutput.createWithContext(reporter, helper.getLevel().registryAccess());
-        mob.saveWithoutId(output);
-        helper.assertTrue(reporter.isEmpty(), "Saving must not report problems: " + reporter.getReport());
-        return output.buildResult();
-    }
-
     private static CompoundTag saveGoal(GameTestHelper helper, ZombieJockeyGoal goal) {
         ProblemReporter.Collector reporter = new ProblemReporter.Collector();
         TagValueOutput output = TagValueOutput.createWithoutContext(reporter);
         goal.save(output);
         helper.assertTrue(reporter.isEmpty(), "Saving goal must not report problems: " + reporter.getReport());
         return output.buildResult();
-    }
-
-    private static void load(GameTestHelper helper, Mob mob, CompoundTag tag) {
-        ProblemReporter.Collector reporter = new ProblemReporter.Collector();
-        mob.load(TagValueInput.create(reporter, helper.getLevel().registryAccess(), tag));
-        helper.assertTrue(reporter.isEmpty(), "Loading must not report problems: " + reporter.getReport());
     }
 
     private static float healthFor(Difficulty difficulty) {

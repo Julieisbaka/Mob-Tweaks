@@ -418,7 +418,7 @@ public class AdditionalMobGameTests {
         helper.succeed();
     }
 
-    private static <T extends Mob> T createMob(GameTestHelper helper, EntityType<T> type) {
+    static <T extends Mob> T createMob(GameTestHelper helper, EntityType<T> type) {
         T mob = type.create(helper.getLevel(), EntitySpawnReason.COMMAND);
         if (mob == null) {
             throw new IllegalStateException("Cannot create test mob " + type);
@@ -443,7 +443,7 @@ public class AdditionalMobGameTests {
         return helper.getLevel().getEntitiesOfClass(WitherSkeleton.class, wither.getBoundingBox().inflate(6));
     }
 
-    private static CompoundTag save(GameTestHelper helper, Mob mob) {
+    static CompoundTag save(GameTestHelper helper, Mob mob) {
         ProblemReporter.Collector reporter = new ProblemReporter.Collector();
         TagValueOutput output = TagValueOutput.createWithContext(reporter, helper.getLevel().registryAccess());
         mob.saveWithoutId(output);
@@ -451,7 +451,7 @@ public class AdditionalMobGameTests {
         return output.buildResult();
     }
 
-    private static void load(GameTestHelper helper, Mob mob, CompoundTag tag) {
+    static void load(GameTestHelper helper, Mob mob, CompoundTag tag) {
         ProblemReporter.Collector reporter = new ProblemReporter.Collector();
         mob.load(TagValueInput.create(reporter, helper.getLevel().registryAccess(), tag));
         helper.assertTrue(reporter.isEmpty(), "Loading must report no problems: " + reporter.getReport());

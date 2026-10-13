@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -41,6 +42,12 @@ abstract class WitherBossMixin extends Monster {
         };
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(health);
         this.setHealth(this.getMaxHealth());
+    }
+
+    @ModifyArg(method = "customServerAiStep", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/boss/wither/WitherBoss;heal(F)V", ordinal = 0), index = 0)
+    private float mobTweaks$scaleSpawnChargeHealing(float amount) {
+        return amount * this.getMaxHealth() / 300.0F;
     }
 
     @Inject(method = "registerGoals", at = @At("TAIL"))

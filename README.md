@@ -53,13 +53,7 @@ A Fabric mod for Minecraft Java Edition **26.3**, by **JulieISBaka**.
 - Unused nutrition and progress toward the next heal survive saving/reloading.
   If a villager reaches full health, unused nutrition is retained for future
   injuries, but the current heal timer resets.
-- Healing does not add to the vanilla breeding food level. Food consumed for
-  healing is no longer available for breeding or sharing.
 - Poppies, wheat, seeds, and other non-food inventory items are not consumed.
-
-This is a custom food-healing mechanic, not an exact Bedrock port. The
-[Minecraft Wiki's healing documentation](https://minecraft.wiki/w/Healing)
-describes Bedrock villagers healing after sleep rather than eating to heal.
 
 ### Wither half-health reinforcements and dash
 
@@ -85,11 +79,54 @@ describes Bedrock villagers healing after sleep rather than eating to heal.
   preserving obsidian, crying obsidian, and wither-immune blocks. Both the
   phase explosion and dash block damage respect `minecraft:mob_griefing`.
 
+### Difficulty-based wither health
+
+- New withers have **300 HP on Easy**, **450 HP on Normal**, and **600 HP on
+  Hard**. Peaceful uses the 300-HP fallback; peaceful monster removal still
+  applies.
+- Health is set when the wither is created. Changing difficulty later does
+  not change an existing wither's current or maximum health.
+- Saved withers retain their attributes and current health on reload,
+  including existing 300-HP withers from older versions.
+- The armor, reinforcement, and dash threshold remains at 50% of actual
+  maximum health: 150 HP on Easy, 225 HP on Normal, and 300 HP on Hard.
+- Withers built from skulls still undergo their vanilla spawn charge,
+  starting at one-third of maximum health. Charge healing scales with maximum
+  health so they enter combat at full health; combat regeneration is unchanged.
+
+### Baby zombie jockeys
+
+- Naturally spawned and reinforcement baby zombies have a **15% chance** to
+  gain the ability to ride additional mobs. This is one saved roll per baby,
+  not a new chance each tick or search.
+- Applies to zombies, husks, drowned, zombie villagers, and zombified piglins.
+- Successful babies seek the nearest visible available mount within their
+  bounding box expanded by 8 blocks horizontally and 4 vertically, approach
+  it, and mount when within 2 blocks.
+- They keep checking periodically if no mount is available and can seek a
+  new mount after dismounting. Both successful and failed rolls persist.
+- Supported mounts:
+  - Wild wolves, ocelots, and wild cats; tamed wolves/cats are excluded.
+  - Pigs, sheep, cows, mooshrooms, foxes, and pandas.
+  - Llamas and trader llamas.
+  - Spiders and cave spiders.
+  - Horses, donkeys, mules, skeleton horses, and zombie horses.
+  - Adult zombies and their variants listed above.
+- Dead, occupied, already-riding, and NoAI mounts are excluded. Babies do not
+  steal a player's mount or stack onto an existing jockey.
+- Vanilla rider control handles movement and combat once mounted. This
+  feature uses existing mobs, rather than spawning additional mounts.
+- Command, spawn-egg, spawner, conversion, and other non-natural/non-
+  reinforcement spawn reasons do not receive the additional roll.
+- Existing chicken and drowned/nautilus jockeys are preserved.
+- The non-zombie mount list is the `mob_tweaks:baby_zombie_mounts` entity-type
+  tag in `src/main/resources/data/mob_tweaks/tags/entity_type/`.
+
 ## Installation
 
 1. Install Fabric Loader **0.19.5 or newer** for Minecraft **26.3**.
 2. Install [Fabric API](https://modrinth.com/mod/fabric-api) for Minecraft 26.3.
-3. Place `mob-tweaks-1.1.0.jar` from `build/libs` in your instance's `mods`
+3. Place `mob-tweaks-1.2.0.jar` from `build/libs` in your instance's `mods`
    directory. Do not install the `-sources.jar`.
 4. Remove an older Mob Tweaks JAR when upgrading; do not install two versions.
 
@@ -108,10 +145,15 @@ From this directory in Windows PowerShell:
 ```
 
 This compiles the mod, creates the JAR and sources JAR in `build/libs`, and
-runs 32 server-side Fabric GameTests in a separate development world.
+runs 47 server-side Fabric GameTests in a separate development world.
 
 To run only the gameplay tests:
 
 ```powershell
 .\gradlew.bat runGameTest
 ```
+
+New tests cover exact wither spawn health and half-health thresholds on every
+difficulty, health persistence across difficulty changes, all 100 jockey
+roll outcomes (exactly 15 successes), all supported mount types and zombie
+variants, exclusions, retries, vanilla AI mounting, and saved passenger data.

@@ -67,7 +67,8 @@ public final class ZombieJockeyGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        if (!this.eligible || !this.zombie.isBaby() || !this.zombie.isAlive() || this.zombie.isPassenger()) {
+        if (!this.eligible || !this.zombie.isBaby() || !this.zombie.isAlive()
+                || this.zombie.isNoAi() || this.zombie.isPassenger()) {
             return false;
         }
         if (this.searchTicks > 0) {
@@ -85,6 +86,9 @@ public final class ZombieJockeyGoal extends Goal {
     @Override
     public void start() {
         this.approachTicks = 100;
+        if (this.mount != null && this.zombie.distanceToSqr(this.mount) > 4.0) {
+            this.zombie.getNavigation().moveTo(this.mount, 1.0);
+        }
         this.tick();
     }
 
