@@ -185,7 +185,8 @@ public class AdditionalMobGameTests {
         Villager villager = createMob(helper, EntityTypes.VILLAGER);
         villager.setHealth(5);
         villager.getInventory().setItem(0, new ItemStack(Items.BREAD, 2));
-        villager.startSleeping(villager.blockPosition());
+        helper.getLevel().setBlockAndUpdate(villager.blockPosition(), Blocks.BED.pick(DyeColor.RED).defaultBlockState());
+        helper.assertTrue(villager.startSleeping(villager.blockPosition()), "Test villager must enter a real bed");
         stepVillager(helper, villager, 1);
         helper.assertTrue(villager.getInventory().countItem(Items.BREAD) == 2 && villager.getHealth() == 5,
                 "Sleeping villagers must not eat to heal");

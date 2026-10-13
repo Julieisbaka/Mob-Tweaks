@@ -33,15 +33,80 @@ Java package / Maven group: `org.julieisbaka`
 - This extends the existing randomized, daytime gifting routine rather than
   making golems offer flowers constantly.
 
+### Dye live shulkers
+
+- Right-click a living shulker with any of the 16 dyes, in either hand.
+- Its shell immediately changes to that dye's color using vanilla synced
+  entity data. The color is saved with the shulker.
+- Consumes one dye in Survival; Creative consumes none. Applying the same
+  color again does not waste dye. Dead shulkers cannot be dyed.
+- Existing sheep dyeing is unchanged.
+
+### Villagers eat to heal
+
+- Injured villagers, including babies, consume food from their inventory.
+  There is no hunger meter or hunger prerequisite.
+- Healing follows the player's normal regeneration cadence: **1 health point
+  (half a heart) every 80 ticks (4 seconds)**.
+- One food item funds healing equal to its player food nutrition: bread
+  restores up to 5 HP, carrots 3 HP, potatoes 1 HP, and beetroots 1 HP.
+  Only edible items with the vanilla villager-food component qualify.
+- Healthy, sleeping, dead, and NoAI villagers do not eat for healing.
+  Healing never exceeds maximum health.
+- Unused nutrition and progress toward the next heal survive saving/reloading.
+  If a villager reaches full health, unused nutrition is retained for future
+  injuries, but the current heal timer resets.
+- Healing does not add to the vanilla breeding food level. Food consumed for
+  healing is no longer available for breeding or sharing.
+- Poppies, wheat, seeds, and other non-food inventory items are not consumed.
+
+This is a custom food-healing mechanic, not an exact Bedrock port. The
+[Minecraft Wiki's healing documentation](https://minecraft.wiki/w/Healing)
+describes Bedrock villagers healing after sleep rather than eating to heal.
+
+### Wither half-health reinforcements and dash
+
+- When an active, living wither reaches **50% health or below**, it creates
+  a **power-7 explosion** and spawns exactly **4 wither skeletons** with their
+  normal stone swords. They spawn after the explosion and inherit its target.
+- The explosion/reinforcements happen **once per wither**, even if it heals,
+  drops below half health again, or the world is saved and reloaded.
+- The initial invulnerable spawning charge and lethal damage do not trigger
+  this additional explosion.
+- At half health or below, the wither can dash toward its target after every
+  **4 main-head skull shots**. Side-head shots do not advance that counter.
+- Dashes have a 10-tick windup, then move in a fixed direction at approximately
+  **1.5 blocks/tick**, for at most **20 ticks**. They stop on horizontal
+  collisions, loss of a valid target, or healing above half health.
+- A dash deals **30 base damage**, with normal Java mob-attack difficulty
+  scaling for players and normal armor/resistance handling. Each victim can
+  be struck only once per dash. Wither-friendly mobs, including the summoned
+  wither skeletons, are not struck.
+- Successful dash hits apply Wither II for 10 seconds on Normal or 40 seconds
+  on Hard, and no Wither effect on Easy.
+- Dashes break ordinary blocks in a **6x8x6** volume around the wither,
+  preserving obsidian, crying obsidian, and wither-immune blocks. Both the
+  phase explosion and dash block damage respect `minecraft:mob_griefing`.
+- Native Java wither health, projectile attacks, armor phase, regeneration,
+  initial spawn explosion, and death behavior remain unchanged.
+
+These are **Bedrock-inspired** additions, not a full Bedrock wither port.
+The [Minecraft Wiki's wither behavior](https://minecraft.wiki/w/Wither)
+describes a dash after every second four-skull volley; this mod uses the
+requested four-main-head-shot cadence and approximate movement. It also
+spawns four reinforcements, including on Easy, instead of Bedrock's three
+on Normal/Hard. No custom horizontal-tilt animation is added.
+
 ## Installation
 
 1. Install Fabric Loader **0.19.5 or newer** for Minecraft **26.3**.
 2. Install [Fabric API](https://modrinth.com/mod/fabric-api) for Minecraft 26.3.
-3. Place `mob-tweaks-1.0.0.jar` from `build/libs` in your instance's `mods`
+3. Place `mob-tweaks-1.1.0.jar` from `build/libs` in your instance's `mods`
    directory. Do not install the `-sources.jar`.
+4. Remove an older Mob Tweaks JAR when upgrading; do not install two versions.
 
 For single-player, install in the client instance. For multiplayer, install
-on the Fabric server; clients do not need Mob Tweaks because both changes use
+on the Fabric server; clients do not need Mob Tweaks because all changes use
 vanilla entities and inventory data.
 
 Minecraft 26.3 and this project require **Java 25**.
@@ -55,7 +120,7 @@ From this directory in Windows PowerShell:
 ```
 
 This compiles the mod, creates the JAR and sources JAR in `build/libs`, and
-runs 11 server-side Fabric GameTests in a separate development world.
+runs 32 server-side Fabric GameTests in a separate development world.
 
 To run only the gameplay tests:
 
@@ -65,6 +130,10 @@ To run only the gameplay tests:
 
 Tests cover early, late, and bonus raid waves; correct raid membership and
 bow equipment; completed and interrupted offers; inventory stacking and
-capacity; adult and out-of-range recipients; and copper golem compatibility.
+capacity; adult and out-of-range recipients; copper golem compatibility;
+all 16 shulker dyes, Creative, offhand interaction, and color persistence;
+food nutrition, healing timing, eligibility, and save/load; the wither's
+half-health threshold, one-time reinforcements, equipped skeletons,
+dash cadence, AI-driven movement, single-hit damage, and block protection.
 
 Test-only code is in `src/gametest` and is not shipped in the mod JAR.

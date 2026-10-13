@@ -92,7 +92,8 @@ public final class WitherDashGoal extends Goal {
         for (LivingEntity victim : level.getEntitiesOfClass(LivingEntity.class,
                 this.wither.getBoundingBox().expandTowards(this.direction).inflate(0.2))) {
             if (victim != this.wither && !victim.is(EntityTypeTags.WITHER_FRIENDS)
-                    && this.wither.canAttack(victim) && this.hitEntities.add(victim.getUUID())
+                    && this.wither.canAttack(victim) && this.wither.hasLineOfSight(victim)
+                    && this.hitEntities.add(victim.getUUID())
                     && victim.hurtServer(level, this.wither.damageSources().mobAttack(this.wither), 30.0F)) {
                 int effectTicks = switch (level.getDifficulty()) {
                     case NORMAL -> 200;
