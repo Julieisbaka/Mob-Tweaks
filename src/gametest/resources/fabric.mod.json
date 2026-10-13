@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "mob_tweaks_test",
+  "version": "1.0.0",
+  "name": "Mob Tweaks Tests",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [
+      "org.julieisbaka.mobtweaks.test.MobTweaksGameTests",
+      "org.julieisbaka.mobtweaks.test.AdditionalMobGameTests"
+    ]
+  },
+  "mixins": ["mob_tweaks_test.mixins.json"],
+  "depends": {
+    "mob_tweaks": "*",
+    "fabric-gametest-api-v1": "*"
+  }
+}

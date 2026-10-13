@@ -1,0 +1,9 @@
+{
+  "required": true,
+  "package": "org.julieisbaka.mobtweaks.test.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": ["OfferFlowerGoalAccessor", "RaidAccessor", "VillagerAccessor", "WitherBossAccessor"],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

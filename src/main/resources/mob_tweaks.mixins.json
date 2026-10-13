@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "org.julieisbaka.mobtweaks.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": [
+    "RaidMixin",
+    "OfferFlowerGoalMixin",
+    "DyeItemMixin",
+    "VillagerMixin",
+    "WitherBossMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
