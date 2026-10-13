@@ -3,7 +3,7 @@
   "id": "mob_tweaks",
   "version": "${version}",
   "name": "Mob Tweaks",
-  "description": "Raid illusioners, villager flowers and food healing, dyeable shulkers, and wither reinforcements and dash attacks.",
+  "description": "Raid illusioners, villager flowers and food healing, dyeable shulkers, difficulty-scaled withers, and baby zombie jockeys.",
   "authors": ["JulieISBaka"],
   "environment": "*",
   "mixins": ["mob_tweaks.mixins.json"],

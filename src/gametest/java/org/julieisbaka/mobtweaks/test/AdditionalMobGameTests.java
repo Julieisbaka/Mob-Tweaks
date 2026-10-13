@@ -239,7 +239,7 @@ public class AdditionalMobGameTests {
     @GameTest(padding = 16)
     public void damageCrossingHalfHealthTriggersImmediately(GameTestHelper helper) {
         WitherBoss wither = createMob(helper, EntityTypes.WITHER);
-        wither.setHealth(155);
+        wither.setHealth(wither.getMaxHealth() / 2 + 5);
         wither.hurtServer(helper.getLevel(), wither.damageSources().generic(), 10);
         helper.assertTrue(reinforcements(helper, wither).size() == 4, "Damage crossing the threshold must trigger immediately");
         reinforcements(helper, wither).forEach(Mob::discard);
@@ -353,7 +353,7 @@ public class AdditionalMobGameTests {
         WitherDashGoal goal = new WitherDashGoal(wither);
         goal.start();
         helper.assertTrue(goal.canContinueToUse(), "Valid dash must continue");
-        wither.setHealth(200);
+        wither.setHealth(wither.getMaxHealth() / 2 + 50);
         helper.assertTrue(!goal.canContinueToUse(), "Above-half-health wither must stop dashing");
         goal.stop();
         wither.setHealth(100);

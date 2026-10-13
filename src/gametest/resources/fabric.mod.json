@@ -7,7 +7,8 @@
   "entrypoints": {
     "fabric-gametest": [
       "org.julieisbaka.mobtweaks.test.MobTweaksGameTests",
-      "org.julieisbaka.mobtweaks.test.AdditionalMobGameTests"
+      "org.julieisbaka.mobtweaks.test.AdditionalMobGameTests",
+      "org.julieisbaka.mobtweaks.test.JockeyAndHealthGameTests"
     ]
   },
   "mixins": ["mob_tweaks_test.mixins.json"],

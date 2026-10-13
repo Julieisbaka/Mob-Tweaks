@@ -6,6 +6,7 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.skeleton.WitherSkeleton;
@@ -29,6 +30,17 @@ abstract class WitherBossMixin extends Monster {
 
     protected WitherBossMixin(EntityType<? extends Monster> type, Level level) {
         super(type, level);
+    }
+
+    @Inject(method = "<init>", at = @At("TAIL"))
+    private void mobTweaks$setSpawnHealth(EntityType<? extends WitherBoss> type, Level level, CallbackInfo ci) {
+        double health = switch (level.getDifficulty()) {
+            case NORMAL -> 450.0;
+            case HARD -> 600.0;
+            default -> 300.0;
+        };
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(health);
+        this.setHealth(this.getMaxHealth());
     }
 
     @Inject(method = "registerGoals", at = @At("TAIL"))

@@ -2,9 +2,6 @@
 
 A Fabric mod for Minecraft Java Edition **26.3**, by **JulieISBaka**.
 
-Mod ID: `mob_tweaks`  
-Java package / Maven group: `org.julieisbaka`
-
 ## Features
 
 ### Illusioners in raids
@@ -87,15 +84,6 @@ describes Bedrock villagers healing after sleep rather than eating to heal.
 - Dashes break ordinary blocks in a **6x8x6** volume around the wither,
   preserving obsidian, crying obsidian, and wither-immune blocks. Both the
   phase explosion and dash block damage respect `minecraft:mob_griefing`.
-- Native Java wither health, projectile attacks, armor phase, regeneration,
-  initial spawn explosion, and death behavior remain unchanged.
-
-These are **Bedrock-inspired** additions, not a full Bedrock wither port.
-The [Minecraft Wiki's wither behavior](https://minecraft.wiki/w/Wither)
-describes a dash after every second four-skull volley; this mod uses the
-requested four-main-head-shot cadence and approximate movement. It also
-spawns four reinforcements, including on Easy, instead of Bedrock's three
-on Normal/Hard. No custom horizontal-tilt animation is added.
 
 ## Installation
 
@@ -127,13 +115,3 @@ To run only the gameplay tests:
 ```powershell
 .\gradlew.bat runGameTest
 ```
-
-Tests cover early, late, and bonus raid waves; correct raid membership and
-bow equipment; completed and interrupted offers; inventory stacking and
-capacity; adult and out-of-range recipients; copper golem compatibility;
-all 16 shulker dyes, Creative, offhand interaction, and color persistence;
-food nutrition, healing timing, eligibility, and save/load; the wither's
-half-health threshold, one-time reinforcements, equipped skeletons,
-dash cadence, AI-driven movement, single-hit damage, and block protection.
-
-Test-only code is in `src/gametest` and is not shipped in the mod JAR.
