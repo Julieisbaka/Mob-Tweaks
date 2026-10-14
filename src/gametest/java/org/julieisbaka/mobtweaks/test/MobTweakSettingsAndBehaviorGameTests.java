@@ -1,0 +1,212 @@
+package org.julieisbaka.mobtweaks.test;
+
+import static org.julieisbaka.mobtweaks.test.AdditionalMobGameTests.createMob;
+
+import net.fabricmc.fabric.api.gametest.v1.GameTest;
+import net.minecraft.core.BlockPos;
+import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.Enderman;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.skeleton.Skeleton;
+import net.minecraft.world.entity.animal.equine.AbstractHorse;
+import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.gamerules.GameRule;
+import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.phys.Vec3;
+import org.julieisbaka.mobtweaks.MobTweak;
+import org.julieisbaka.mobtweaks.MobTweaksConfig;
+import org.julieisbaka.mobtweaks.MobTweaksGameRules;
+import org.julieisbaka.mobtweaks.MobTweaksSettings;
+import org.julieisbaka.mobtweaks.SkeletonCoverGoal;
+import org.julieisbaka.mobtweaks.test.mixin.EndermanAccessor;
+
+public class MobTweakSettingsAndBehaviorGameTests {
+    @GameTest
+    public void everyTweakHasAnEnabledWorldRuleAndConfigDefault(GameTestHelper helper) {
+        for (MobTweak tweak : MobTweak.values()) {
+            GameRule<Boolean> rule = MobTweaksGameRules.get(tweak);
+            helper.assertTrue(helper.getLevel().getGameRules().get(rule), "World rule should default on: " + tweak);
+            helper.assertTrue(MobTweaksConfig.isEnabled(tweak), "Config setting should default on: " + tweak);
+            helper.assertTrue(MobTweaksSettings.isEnabled(helper.getLevel(), tweak), "Tweak should default on: " + tweak);
+        }
+        helper.succeed();
+    }
+
+    @GameTest
+    public void worldRuleDisablesOnlyItsOwnTweak(GameTestHelper helper) {
+        MobTweak disabled = MobTweak.VEX_RECALL;
+        GameRule<Boolean> rule = MobTweaksGameRules.get(disabled);
+        try {
+            helper.getLevel().getGameRules().set(rule, false, helper.getLevel().getServer());
+            helper.assertTrue(!MobTweaksSettings.isEnabled(helper.getLevel(), disabled), "Disabled rule must disable its tweak");
+            helper.assertTrue(
+                    MobTweaksSettings.isEnabled(helper.getLevel(), MobTweak.RAVAGER_TURTLE_EGGS),
+                    "Other tweaks must remain enabled");
+        } finally {
+            helper.getLevel().getGameRules().set(rule, true, helper.getLevel().getServer());
+        }
+        helper.succeed();
+    }
+
+    @GameTest
+    public void horseWarnsWithARearAndKeepsRiderMounted(GameTestHelper helper) {
+        AbstractHorse horse = createMob(helper, EntityTypes.HORSE);
+        horse.setTamed(true);
+        horse.setItemSlot(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
+        helper.getLevel().addFreshEntity(horse);
+
+        ServerPlayer rider = (ServerPlayer) helper.makeMockServerPlayer(GameType.SURVIVAL);
+        helper.assertTrue(rider.startRiding(horse, true, true), "Test rider should mount horse");
+        Vec3 forward = horse.getLookAngle().multiply(1.0, 0.0, 1.0).normalize();
+        Monster attacker = createMob(helper, EntityTypes.ZOMBIE);
+        attacker.setPos(
+                horse.getX() - forward.x * 4.0,
+                horse.getY(),
+                horse.getZ() - forward.z * 4.0);
+        helper.getLevel().addFreshEntity(attacker);
+
+        horse.aiStep();
+        helper.assertTrue(horse.isStanding(), "Horse should rear when a hostile approaches from behind");
+        helper.assertTrue(rider.getVehicle() == horse, "Warning rear must not buck the rider off");
+        attacker.discard();
+        horse.discard();
+        helper.succeed();
+    }
+
+    @GameTest
+    public void horseRearWarningCanBeDisabled(GameTestHelper helper) {
+        GameRule<Boolean> rule = MobTweaksGameRules.get(MobTweak.HORSE_REAR_WARNING);
+        try {
+            helper.getLevel().getGameRules().set(rule, false, helper.getLevel().getServer());
+            AbstractHorse horse = createMob(helper, EntityTypes.HORSE);
+            horse.setTamed(true);
+            horse.setItemSlot(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
+            helper.getLevel().addFreshEntity(horse);
+            ServerPlayer rider = (ServerPlayer) helper.makeMockServerPlayer(GameType.SURVIVAL);
+            rider.startRiding(horse, true, true);
+            Vec3 forward = horse.getLookAngle().multiply(1.0, 0.0, 1.0).normalize();
+            Monster attacker = createMob(helper, EntityTypes.ZOMBIE);
+            attacker.setPos(
+                    horse.getX() - forward.x * 4.0,
+                    horse.getY(),
+                    horse.getZ() - forward.z * 4.0);
+            helper.getLevel().addFreshEntity(attacker);
+
+            horse.aiStep();
+            helper.assertTrue(!horse.isStanding(), "Disabled warning must not make the horse rear");
+            attacker.discard();
+            horse.discard();
+        } finally {
+            helper.getLevel().getGameRules().set(rule, true, helper.getLevel().getServer());
+        }
+        helper.succeed();
+    }
+
+    @GameTest
+    public void bowSkeletonMovesBehindCoverAfterShooting(GameTestHelper helper) {
+        Skeleton skeleton = createMob(helper, EntityTypes.SKELETON);
+        Villager target = createMob(helper, EntityTypes.VILLAGER);
+        target.setPos(skeleton.getX() + 6.0, skeleton.getY(), skeleton.getZ());
+        skeleton.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+        skeleton.setTarget(target);
+        helper.getLevel().addFreshEntity(skeleton);
+        helper.getLevel().addFreshEntity(target);
+        BlockPos wall = BlockPos.containing(skeleton.getX() + 2.0, skeleton.getY(), skeleton.getZ());
+        helper.getLevel().setBlockAndUpdate(wall, Blocks.STONE.defaultBlockState());
+        helper.getLevel().setBlockAndUpdate(wall.above(), Blocks.STONE.defaultBlockState());
+
+        SkeletonCoverGoal goal = new SkeletonCoverGoal(skeleton);
+        goal.beginReload();
+        helper.assertTrue(goal.canUse(), "Skeleton should find cover behind blocks during bow reload");
+        goal.start();
+        goal.tick();
+        goal.stop();
+        skeleton.discard();
+        target.discard();
+        helper.succeed();
+    }
+
+    @GameTest
+    public void skeletonCoverCanBeDisabled(GameTestHelper helper) {
+        GameRule<Boolean> rule = MobTweaksGameRules.get(MobTweak.SKELETON_COVER);
+        try {
+            helper.getLevel().getGameRules().set(rule, false, helper.getLevel().getServer());
+            Skeleton skeleton = createMob(helper, EntityTypes.SKELETON);
+            Villager target = createMob(helper, EntityTypes.VILLAGER);
+            target.setPos(skeleton.getX() + 6.0, skeleton.getY(), skeleton.getZ());
+            skeleton.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+            skeleton.setTarget(target);
+            helper.getLevel().addFreshEntity(skeleton);
+            helper.getLevel().addFreshEntity(target);
+            BlockPos wall = BlockPos.containing(skeleton.getX() + 2.0, skeleton.getY(), skeleton.getZ());
+            helper.getLevel().setBlockAndUpdate(wall, Blocks.STONE.defaultBlockState());
+            helper.getLevel().setBlockAndUpdate(wall.above(), Blocks.STONE.defaultBlockState());
+
+            SkeletonCoverGoal goal = new SkeletonCoverGoal(skeleton);
+            goal.beginReload();
+            helper.assertTrue(!goal.canUse(), "Disabled feature must prevent cover-seeking");
+            skeleton.discard();
+            target.discard();
+        } finally {
+            helper.getLevel().getGameRules().set(rule, true, helper.getLevel().getServer());
+        }
+        helper.succeed();
+    }
+
+    @GameTest
+    public void lowHealthEndermanPlacesItsCarriedBlockBetweenItselfAndAttacker(GameTestHelper helper) {
+        Enderman enderman = createMob(helper, EntityTypes.ENDERMAN);
+        Mob attacker = createMob(helper, EntityTypes.COW);
+        attacker.setPos(enderman.getX() + 5.0, enderman.getY(), enderman.getZ());
+        enderman.setHealth(enderman.getMaxHealth() / 2.0F);
+        enderman.setCarriedBlock(Blocks.STONE.defaultBlockState());
+        enderman.setTarget(attacker);
+        helper.getLevel().addFreshEntity(enderman);
+        helper.getLevel().addFreshEntity(attacker);
+        BlockPos expectedBlock = BlockPos.containing(enderman.position().add(1.25, 0, 0));
+
+        ((EndermanAccessor) enderman).mobTweaks$serverAiStep(helper.getLevel());
+        helper.assertTrue(helper.getLevel().getBlockState(expectedBlock).is(Blocks.STONE),
+                "Enderman should place its held block in the attacker's path");
+        helper.assertTrue(enderman.getCarriedBlock() == null, "Placed block should leave the enderman's hands");
+        enderman.discard();
+        attacker.discard();
+        helper.succeed();
+    }
+
+    @GameTest
+    public void endermanBlockDefenseRespectsMobGriefing(GameTestHelper helper) {
+        boolean original = helper.getLevel().getGameRules().get(GameRules.MOB_GRIEFING);
+        try {
+            helper.getLevel().getGameRules().set(GameRules.MOB_GRIEFING, false, helper.getLevel().getServer());
+            Enderman enderman = createMob(helper, EntityTypes.ENDERMAN);
+            Mob attacker = createMob(helper, EntityTypes.COW);
+            attacker.setPos(enderman.getX() + 5.0, enderman.getY(), enderman.getZ());
+            enderman.setHealth(enderman.getMaxHealth() / 2.0F);
+            enderman.setCarriedBlock(Blocks.STONE.defaultBlockState());
+            enderman.setTarget(attacker);
+            helper.getLevel().addFreshEntity(enderman);
+            helper.getLevel().addFreshEntity(attacker);
+            BlockPos expectedBlock = BlockPos.containing(enderman.position().add(1.25, 0, 0));
+
+            ((EndermanAccessor) enderman).mobTweaks$serverAiStep(helper.getLevel());
+            helper.assertTrue(helper.getLevel().getBlockState(expectedBlock).isAir(),
+                    "Enderman must not place blocks when mobGriefing is disabled");
+            helper.assertTrue(enderman.getCarriedBlock().is(Blocks.STONE), "Disabled placement must retain its block");
+            enderman.discard();
+            attacker.discard();
+        } finally {
+            helper.getLevel().getGameRules().set(GameRules.MOB_GRIEFING, original, helper.getLevel().getServer());
+        }
+        helper.succeed();
+    }
+}

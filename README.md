@@ -24,4 +24,9 @@ A Fabric mod for Minecraft Java Edition **26.3**, by **JulieISBaka**.
 - **Ravagers:** Crush turtle eggs when charging through them.
 - **Foxes:** Bring sweet berries to nearby kits.
 - **Vexes:** Return to their evoker when they lose their target or wander too far away.
-- **Iron golems:** Move between villagers and hostile projectiles to intercept them.
+- **Iron golems:** Try to move between villagers and incoming hostile projectiles.
+- **Horses:** Rear and neigh when a hostile mob approaches from behind, without bucking the rider.
+- **Skeletons, strays, and bogged:** Seek cover while reloading their bows.
+- **Endermen:** At half health, place a carried block between themselves and an attacker.
+
+Each change can be disabled individually in the world or in `config/mob-tweaks.properties`.

@@ -23,6 +23,7 @@ import net.minecraft.world.entity.monster.cubemob.AbstractCubeMob;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
+import org.julieisbaka.mobtweaks.CubeSpawnClearance;
 import org.julieisbaka.mobtweaks.test.mixin.WitherBossAccessor;
 
 public class CubeAndExplosionGameTests {
@@ -89,7 +90,8 @@ public class CubeAndExplosionGameTests {
             helper.getLevel().setBlockAndUpdate(pos, inside ? Blocks.AIR.defaultBlockState() : Blocks.STONE.defaultBlockState());
         }
         for (EntityType<? extends AbstractCubeMob> type : types()) {
-            AABB spawnBox = type.getSpawnAABB(origin.getX() + 0.5, origin.getY(), origin.getZ() + 0.5);
+            AABB spawnBox = CubeSpawnClearance.getSpawnBox(
+                    type, helper.getLevel(), origin.getX() + 0.5, origin.getY(), origin.getZ() + 0.5);
             helper.assertTrue(spawnBox.getXsize() == 2 && spawnBox.getYsize() == 2 && spawnBox.getZsize() == 2,
                     "Spawn footprint must be exactly 2x2x2");
             helper.assertTrue(helper.getLevel().noCollision(spawnBox), "Actual two-block room must pass spawn clearance");

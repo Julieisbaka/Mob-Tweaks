@@ -3,13 +3,19 @@
   "id": "mob_tweaks",
   "version": "${version}",
   "name": "Mob Tweaks",
-  "description": "Raid illusioners, villager flowers and healing, dyeable shulkers, stronger withers, baby zombie jockeys, berry-giving foxes, and protective golems.",
-  "authors": ["JulieISBaka"],
+  "description": "Mob behavior tweaks for raids, villagers, withers, foxes, vexes, golems, skeletons, horses, and endermen.",
+  "authors": [
+    "JulieISBaka"
+  ],
   "environment": "*",
   "entrypoints": {
-    "main": ["org.julieisbaka.mobtweaks.MobTweaks"]
+    "main": [
+      "org.julieisbaka.mobtweaks.MobTweaks"
+    ]
   },
-  "mixins": ["mob_tweaks.mixins.json"],
+  "mixins": [
+    "mob_tweaks.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=0.19.5",
     "minecraft": "~26.3",
