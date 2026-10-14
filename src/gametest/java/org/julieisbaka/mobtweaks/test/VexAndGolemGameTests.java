@@ -34,8 +34,7 @@ public class VexAndGolemGameTests {
         helper.assertTrue(goal.canContinueToUse(), "Vex should continue returning until near its owner");
         goal.tick();
         helper.assertTrue(vex.getMoveControl().hasWanted(), "Returning vex should fly toward its owner");
-        helper.assertTrue(
-                vex.getMoveControl().getWantedX() == evoker.getX(),
+        helper.assertTrue(vex.getMoveControl().getWantedX() == evoker.getX(),
                 "Returning vex should steer toward its owner's position");
         goal.stop();
         helper.succeed();
@@ -78,8 +77,8 @@ public class VexAndGolemGameTests {
         IronGolem golem = createMob(helper, EntityTypes.IRON_GOLEM);
         Villager villager = createMob(helper, EntityTypes.VILLAGER);
         Skeleton skeleton = createMob(helper, EntityTypes.SKELETON);
-        AbstractArrow arrow = (AbstractArrow) EntityTypes.ARROW.create(
-                helper.getLevel(), net.minecraft.world.entity.EntitySpawnReason.COMMAND);
+        AbstractArrow arrow = (AbstractArrow) EntityTypes.ARROW.create(helper.getLevel(),
+                net.minecraft.world.entity.EntitySpawnReason.COMMAND);
         if (arrow == null) {
             throw new IllegalStateException("Could not create test arrow");
         }
@@ -97,14 +96,12 @@ public class VexAndGolemGameTests {
         goal.start();
         goal.tick();
         helper.assertTrue(golem.getMoveControl().hasWanted(), "Golem should move to intercept the arrow");
-        helper.assertTrue(
-                golem.getMoveControl().getWantedX() > villager.getX(),
+        helper.assertTrue(golem.getMoveControl().getWantedX() > villager.getX(),
                 "Golem should move toward the incoming arrow's side of the villager");
         Vec3 start = arrow.position();
         Vec3 end = start.add(arrow.getDeltaMovement().scale(8.0));
         AABB searchArea = arrow.getBoundingBox().expandTowards(end.subtract(start)).inflate(1.0);
-        EntityHitResult actualHit = ProjectileUtil.getEntityHitResult(
-                helper.getLevel(), arrow, start, end, searchArea,
+        EntityHitResult actualHit = ProjectileUtil.getEntityHitResult(helper.getLevel(), arrow, start, end, searchArea,
                 candidate -> candidate.isPickable() && candidate != skeleton);
         helper.assertTrue(actualHit != null && actualHit.getEntity() == villager,
                 "A golem away from the shot's actual path must not guarantee interception");
@@ -120,8 +117,8 @@ public class VexAndGolemGameTests {
     public void golemIgnoresPlayerProjectiles(GameTestHelper helper) {
         IronGolem golem = createMob(helper, EntityTypes.IRON_GOLEM);
         Villager villager = createMob(helper, EntityTypes.VILLAGER);
-        AbstractArrow arrow = (AbstractArrow) EntityTypes.ARROW.create(
-                helper.getLevel(), net.minecraft.world.entity.EntitySpawnReason.COMMAND);
+        AbstractArrow arrow = (AbstractArrow) EntityTypes.ARROW.create(helper.getLevel(),
+                net.minecraft.world.entity.EntitySpawnReason.COMMAND);
         if (arrow == null) {
             throw new IllegalStateException("Could not create test arrow");
         }
@@ -132,8 +129,7 @@ public class VexAndGolemGameTests {
         helper.getLevel().addFreshEntity(villager);
         helper.getLevel().addFreshEntity(arrow);
 
-        helper.assertTrue(
-                !new IronGolemProjectileGuardGoal(golem).canUse(),
+        helper.assertTrue(!new IronGolemProjectileGuardGoal(golem).canUse(),
                 "Golem should not intercept projectiles fired by players");
         golem.discard();
         villager.discard();

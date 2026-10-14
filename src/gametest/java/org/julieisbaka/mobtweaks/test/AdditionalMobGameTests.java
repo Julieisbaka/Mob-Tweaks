@@ -41,8 +41,9 @@ public class AdditionalMobGameTests {
         for (DyeColor color : DyeColor.values()) {
             Item dye = Items.DYE.pick(color);
             ItemStack stack = new ItemStack(dye, 2);
-            helper.assertTrue(dye.interactLivingEntity(stack, player, shulker, InteractionHand.MAIN_HAND)
-                    .consumesAction(), "Dye interaction must succeed");
+            helper.assertTrue(
+                    dye.interactLivingEntity(stack, player, shulker, InteractionHand.MAIN_HAND).consumesAction(),
+                    "Dye interaction must succeed");
             helper.assertTrue(shulker.getColor() == stack.get(DataComponents.DYE), "Each dye must apply its own color");
             helper.assertTrue(stack.getCount() == 1, "Survival dyeing must consume exactly one dye");
         }
@@ -53,9 +54,12 @@ public class AdditionalMobGameTests {
     public void creativeAndSameColorDoNotConsumeDye(GameTestHelper helper) {
         Shulker shulker = createMob(helper, EntityTypes.SHULKER);
         ItemStack dye = new ItemStack(Items.DYE.pick(DyeColor.RED), 2);
-        dye.getItem().interactLivingEntity(dye, helper.makeMockServerPlayer(GameType.CREATIVE), shulker, InteractionHand.OFF_HAND);
-        helper.assertTrue(shulker.getColor() == DyeColor.RED && dye.getCount() == 2, "Creative must recolor without consuming");
-        dye.getItem().interactLivingEntity(dye, helper.makeMockPlayer(GameType.SURVIVAL), shulker, InteractionHand.MAIN_HAND);
+        dye.getItem().interactLivingEntity(dye, helper.makeMockServerPlayer(GameType.CREATIVE), shulker,
+                InteractionHand.OFF_HAND);
+        helper.assertTrue(shulker.getColor() == DyeColor.RED && dye.getCount() == 2,
+                "Creative must recolor without consuming");
+        dye.getItem().interactLivingEntity(dye, helper.makeMockPlayer(GameType.SURVIVAL), shulker,
+                InteractionHand.MAIN_HAND);
         helper.assertTrue(dye.getCount() == 2, "Same-color dye must not be wasted");
         helper.succeed();
     }
@@ -65,8 +69,9 @@ public class AdditionalMobGameTests {
         Shulker shulker = createMob(helper, EntityTypes.SHULKER);
         shulker.setHealth(0);
         ItemStack dye = new ItemStack(Items.DYE.pick(DyeColor.RED));
-        helper.assertTrue(!dye.getItem().interactLivingEntity(dye, helper.makeMockPlayer(GameType.SURVIVAL),
-                shulker, InteractionHand.MAIN_HAND).consumesAction(), "Dead shulkers must reject dye");
+        helper.assertTrue(!dye.getItem()
+                .interactLivingEntity(dye, helper.makeMockPlayer(GameType.SURVIVAL), shulker, InteractionHand.MAIN_HAND)
+                .consumesAction(), "Dead shulkers must reject dye");
         helper.assertTrue(shulker.getColor() == null && dye.getCount() == 1, "Rejected dye must not change state");
         helper.succeed();
     }
@@ -75,8 +80,8 @@ public class AdditionalMobGameTests {
     public void shulkerColorSurvivesSaveLoad(GameTestHelper helper) {
         Shulker shulker = createMob(helper, EntityTypes.SHULKER);
         Item cyanDye = Items.DYE.pick(DyeColor.CYAN);
-        cyanDye.interactLivingEntity(new ItemStack(cyanDye), helper.makeMockPlayer(GameType.SURVIVAL),
-                shulker, InteractionHand.MAIN_HAND);
+        cyanDye.interactLivingEntity(new ItemStack(cyanDye), helper.makeMockPlayer(GameType.SURVIVAL), shulker,
+                InteractionHand.MAIN_HAND);
         Shulker loaded = createMob(helper, EntityTypes.SHULKER);
         load(helper, loaded, save(helper, shulker));
         helper.assertTrue(loaded.getColor() == DyeColor.CYAN, "Dyed color must persist");
@@ -91,7 +96,8 @@ public class AdditionalMobGameTests {
         helper.assertTrue(player.interactOn(shulker, InteractionHand.OFF_HAND, Vec3.ZERO).consumesAction(),
                 "Player interaction path must accept offhand dye");
         helper.assertTrue(shulker.getColor() == DyeColor.BLUE, "Offhand interaction must recolor");
-        helper.assertTrue(player.getItemInHand(InteractionHand.OFF_HAND).getCount() == 1, "Offhand must consume one dye");
+        helper.assertTrue(player.getItemInHand(InteractionHand.OFF_HAND).getCount() == 1,
+                "Offhand must consume one dye");
         helper.succeed();
     }
 
@@ -110,7 +116,8 @@ public class AdditionalMobGameTests {
             helper.assertTrue(villager.getHealth() == 3, "Must heal exactly one HP at 80 ticks");
             stepVillager(helper, villager, 80 * (nutrition - 1));
             helper.assertTrue(villager.getHealth() == 2 + nutrition, "Total healing must equal food nutrition");
-            helper.assertTrue(villager.getInventory().countItem(food) == 1, "Must finish first food before consuming second");
+            helper.assertTrue(villager.getInventory().countItem(food) == 1,
+                    "Must finish first food before consuming second");
         }
         helper.succeed();
     }
@@ -120,15 +127,18 @@ public class AdditionalMobGameTests {
         Villager villager = createMob(helper, EntityTypes.VILLAGER);
         villager.getInventory().setItem(0, new ItemStack(Items.BREAD, 2));
         stepVillager(helper, villager, 160);
-        helper.assertTrue(villager.getInventory().countItem(Items.BREAD) == 2, "Healthy villagers must not consume food");
+        helper.assertTrue(villager.getInventory().countItem(Items.BREAD) == 2,
+                "Healthy villagers must not consume food");
         villager.getInventory().clearContent();
         villager.getInventory().setItem(0, new ItemStack(Items.POPPY, 3));
         villager.getInventory().setItem(1, new ItemStack(Items.WHEAT, 3));
         villager.setHealth(5);
         stepVillager(helper, villager, 160);
         helper.assertTrue(villager.getHealth() == 5, "Non-food items must not heal");
-        helper.assertTrue(villager.getInventory().countItem(Items.POPPY) == 3
-                && villager.getInventory().countItem(Items.WHEAT) == 3, "Flowers and crops must not be consumed");
+        helper.assertTrue(
+                villager.getInventory().countItem(Items.POPPY) == 3
+                        && villager.getInventory().countItem(Items.WHEAT) == 3,
+                "Flowers and crops must not be consumed");
         helper.succeed();
     }
 
@@ -161,7 +171,8 @@ public class AdditionalMobGameTests {
         stepVillager(helper, loaded, 39);
         helper.assertTrue(loaded.getHealth() == 10, "Saved healing timer must retain its elapsed ticks");
         stepVillager(helper, loaded, 1);
-        helper.assertTrue(loaded.getHealth() == 11 && loaded.getInventory().isEmpty(), "Saved food must heal without consuming twice");
+        helper.assertTrue(loaded.getHealth() == 11 && loaded.getInventory().isEmpty(),
+                "Saved food must heal without consuming twice");
         helper.succeed();
     }
 
@@ -172,7 +183,8 @@ public class AdditionalMobGameTests {
         villager.getInventory().setItem(0, new ItemStack(Items.BREAD, 2));
         stepVillager(helper, villager, 240);
         helper.assertTrue(villager.getHealth() == 20, "Healing must clamp to max health");
-        helper.assertTrue(villager.getInventory().countItem(Items.BREAD) == 1, "Healthy villagers must not eat another food");
+        helper.assertTrue(villager.getInventory().countItem(Items.BREAD) == 1,
+                "Healthy villagers must not eat another food");
         villager.setHealth(15);
         stepVillager(helper, villager, 80);
         helper.assertTrue(villager.getHealth() == 16 && villager.getInventory().countItem(Items.BREAD) == 1,
@@ -185,7 +197,8 @@ public class AdditionalMobGameTests {
         Villager villager = createMob(helper, EntityTypes.VILLAGER);
         villager.setHealth(5);
         villager.getInventory().setItem(0, new ItemStack(Items.BREAD, 2));
-        helper.getLevel().setBlockAndUpdate(villager.blockPosition(), Blocks.BED.pick(DyeColor.RED).defaultBlockState());
+        helper.getLevel().setBlockAndUpdate(villager.blockPosition(),
+                Blocks.BED.pick(DyeColor.RED).defaultBlockState());
         helper.assertTrue(villager.startSleeping(villager.blockPosition()), "Test villager must enter a real bed");
         stepVillager(helper, villager, 1);
         helper.assertTrue(villager.getInventory().countItem(Items.BREAD) == 2 && villager.getHealth() == 5,
@@ -218,7 +231,8 @@ public class AdditionalMobGameTests {
         stepWither(helper, wither);
         wither.setHealth(100);
         stepWither(helper, wither);
-        helper.assertTrue(reinforcements(helper, wither).size() == 4, "Healing and crossing half health again must not repeat");
+        helper.assertTrue(reinforcements(helper, wither).size() == 4,
+                "Healing and crossing half health again must not repeat");
         skeletons.forEach(Mob::discard);
         helper.succeed();
     }
@@ -241,7 +255,8 @@ public class AdditionalMobGameTests {
         WitherBoss wither = createMob(helper, EntityTypes.WITHER);
         wither.setHealth(wither.getMaxHealth() / 2 + 5);
         wither.hurtServer(helper.getLevel(), wither.damageSources().generic(), 10);
-        helper.assertTrue(reinforcements(helper, wither).size() == 4, "Damage crossing the threshold must trigger immediately");
+        helper.assertTrue(reinforcements(helper, wither).size() == 4,
+                "Damage crossing the threshold must trigger immediately");
         reinforcements(helper, wither).forEach(Mob::discard);
         helper.succeed();
     }
@@ -286,7 +301,8 @@ public class AdditionalMobGameTests {
         }
         goal.tick();
         goal.applyMovement();
-        helper.assertTrue(Math.abs(wither.getDeltaMovement().length() - 1.5) < 0.001, "Dash speed must be 1.5 blocks/tick");
+        helper.assertTrue(Math.abs(wither.getDeltaMovement().length() - 1.5) < 0.001,
+                "Dash speed must be 1.5 blocks/tick");
         for (int i = 0; i < 20; i++) {
             goal.tick();
         }
@@ -386,12 +402,15 @@ public class AdditionalMobGameTests {
             for (int i = 0; i < 11; i++) {
                 goal.tick();
             }
-            helper.assertTrue(helper.getLevel().getBlockState(stone).is(Blocks.STONE), "mobGriefing=false must preserve blocks");
+            helper.assertTrue(helper.getLevel().getBlockState(stone).is(Blocks.STONE),
+                    "mobGriefing=false must preserve blocks");
             helper.getLevel().getGameRules().set(GameRules.MOB_GRIEFING, true, helper.getLevel().getServer());
             goal.tick();
             helper.assertTrue(helper.getLevel().getBlockState(stone).isAir(), "Dash must break ordinary blocks");
-            helper.assertTrue(helper.getLevel().getBlockState(obsidian).is(Blocks.OBSIDIAN), "Dash must preserve obsidian");
-            helper.assertTrue(helper.getLevel().getBlockState(bedrock).is(Blocks.BEDROCK), "Dash must preserve wither-immune blocks");
+            helper.assertTrue(helper.getLevel().getBlockState(obsidian).is(Blocks.OBSIDIAN),
+                    "Dash must preserve obsidian");
+            helper.assertTrue(helper.getLevel().getBlockState(bedrock).is(Blocks.BEDROCK),
+                    "Dash must preserve wither-immune blocks");
         } finally {
             goal.stop();
             helper.getLevel().getGameRules().set(GameRules.MOB_GRIEFING, original, helper.getLevel().getServer());
@@ -409,8 +428,10 @@ public class AdditionalMobGameTests {
             helper.getLevel().getGameRules().set(GameRules.MOB_GRIEFING, false, helper.getLevel().getServer());
             wither.setHealth(100);
             stepWither(helper, wither);
-            helper.assertTrue(helper.getLevel().getBlockState(block).is(Blocks.STONE), "Phase explosion must respect mobGriefing");
-            helper.assertTrue(reinforcements(helper, wither).size() == 4, "Disabling block damage must not disable reinforcements");
+            helper.assertTrue(helper.getLevel().getBlockState(block).is(Blocks.STONE),
+                    "Phase explosion must respect mobGriefing");
+            helper.assertTrue(reinforcements(helper, wither).size() == 4,
+                    "Disabling block damage must not disable reinforcements");
         } finally {
             reinforcements(helper, wither).forEach(Mob::discard);
             helper.getLevel().getGameRules().set(GameRules.MOB_GRIEFING, original, helper.getLevel().getServer());

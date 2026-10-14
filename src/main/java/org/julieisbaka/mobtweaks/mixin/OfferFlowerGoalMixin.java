@@ -30,10 +30,7 @@ abstract class OfferFlowerGoalMixin {
 
     @Inject(method = "stop", at = @At("HEAD"))
     private void mobTweaks$giveFlowerToBaby(CallbackInfo ci) {
-        if (this.tick != 0
-                || !(this.entity instanceof Villager villager)
-                || !villager.isAlive()
-                || !villager.isBaby()
+        if (this.tick != 0 || !(this.entity instanceof Villager villager) || !villager.isAlive() || !villager.isBaby()
                 || !(this.golem.level() instanceof ServerLevel level)
                 || !MobTweaksSettings.isEnabled(level, MobTweak.BABY_VILLAGER_FLOWERS)
                 || !this.golem.getBoundingBox().inflate(6.0, 2.0, 6.0).intersects(villager.getBoundingBox())) {

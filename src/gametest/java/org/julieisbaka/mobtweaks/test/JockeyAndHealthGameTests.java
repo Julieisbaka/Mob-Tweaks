@@ -98,8 +98,11 @@ public class JockeyAndHealthGameTests {
                 wither.setHealth(healthFor(difficulty) / 2 + 1);
                 wither.tickCount = 1;
                 ((WitherBossAccessor) wither).mobTweaks$serverAiStep(helper.getLevel());
-                helper.assertTrue(helper.getLevel().getEntitiesOfClass(Mob.class,
-                        wither.getBoundingBox().inflate(6), mob -> mob.is(EntityTypes.WITHER_SKELETON)).isEmpty(),
+                helper.assertTrue(
+                        helper.getLevel()
+                                .getEntitiesOfClass(Mob.class, wither.getBoundingBox().inflate(6),
+                                        mob -> mob.is(EntityTypes.WITHER_SKELETON))
+                                .isEmpty(),
                         "Reinforcements must wait for the scaled threshold");
                 wither.setHealth(healthFor(difficulty) / 2);
                 ((WitherBossAccessor) wither).mobTweaks$serverAiStep(helper.getLevel());
@@ -153,8 +156,10 @@ public class JockeyAndHealthGameTests {
             zombie.setBaby(true);
             ZombieJockeyGoal goal = ((ZombieAccessor) zombie).mobTweaks$getJockeyGoal();
             goal.initialize(reason);
-            helper.assertTrue(saveGoal(helper, goal).getBooleanOr("MobTweaksJockeyRolled", false)
-                            == (reason == EntitySpawnReason.NATURAL || reason == EntitySpawnReason.REINFORCEMENT),
+            helper.assertTrue(
+                    saveGoal(helper, goal).getBooleanOr("MobTweaksJockeyRolled",
+                            false) == (reason == EntitySpawnReason.NATURAL
+                                    || reason == EntitySpawnReason.REINFORCEMENT),
                     "Only natural and reinforcement babies may roll: " + reason);
         }
         Zombie adult = createMob(helper, EntityTypes.ZOMBIE);
@@ -205,13 +210,15 @@ public class JockeyAndHealthGameTests {
         wolf.setTame(true, false);
         Cat cat = createMob(helper, EntityTypes.CAT);
         cat.setTame(true, false);
-        helper.assertTrue(!goal.isEligibleMount(wolf) && !goal.isEligibleMount(cat), "Tamed wolves and cats must be excluded");
+        helper.assertTrue(!goal.isEligibleMount(wolf) && !goal.isEligibleMount(cat),
+                "Tamed wolves and cats must be excluded");
         Zombie otherBaby = createMob(helper, EntityTypes.HUSK);
         otherBaby.setBaby(true);
         helper.assertTrue(!goal.isEligibleMount(otherBaby), "Baby zombies cannot be mounts");
-        for (EntityType<? extends Mob> type : List.of(EntityTypes.CHICKEN, EntityTypes.CAMEL,
-                EntityTypes.VILLAGER, EntityTypes.IRON_GOLEM, EntityTypes.SKELETON)) {
-            helper.assertTrue(!goal.isEligibleMount(createMob(helper, type)), "Unlisted mount must be excluded: " + type);
+        for (EntityType<? extends Mob> type : List.of(EntityTypes.CHICKEN, EntityTypes.CAMEL, EntityTypes.VILLAGER,
+                EntityTypes.IRON_GOLEM, EntityTypes.SKELETON)) {
+            helper.assertTrue(!goal.isEligibleMount(createMob(helper, type)),
+                    "Unlisted mount must be excluded: " + type);
         }
         Mob cow = createMob(helper, EntityTypes.COW);
         Zombie rider = createMob(helper, EntityTypes.ZOMBIE);
@@ -271,7 +278,8 @@ public class JockeyAndHealthGameTests {
         Mob cow = createMob(helper, EntityTypes.COW);
         helper.getLevel().addFreshEntity(cow);
         ZombieJockeyGoal goal = ((ZombieAccessor) baby).mobTweaks$getJockeyGoal();
-        helper.assertTrue(!goal.canUse() && baby.getVehicle() == chicken, "Existing chicken jockeys must not be replaced");
+        helper.assertTrue(!goal.canUse() && baby.getVehicle() == chicken,
+                "Existing chicken jockeys must not be replaced");
         baby.stopRiding();
         cow.discard();
         helper.succeed();
@@ -337,8 +345,8 @@ public class JockeyAndHealthGameTests {
         helper.assertTrue(mountData.getListOrEmpty("Passengers").size() == 1,
                 "Mount save must include its baby zombie passenger");
         CompoundTag passenger = mountData.getListOrEmpty("Passengers").getCompoundOrEmpty(0);
-        helper.assertTrue(passenger.getBooleanOr("MobTweaksJockeyEligible", false)
-                        && passenger.getBooleanOr("IsBaby", false),
+        helper.assertTrue(
+                passenger.getBooleanOr("MobTweaksJockeyEligible", false) && passenger.getBooleanOr("IsBaby", false),
                 "Saved passenger must retain baby status and jockey eligibility");
         baby.stopRiding();
         goal.stop();
@@ -347,17 +355,17 @@ public class JockeyAndHealthGameTests {
     }
 
     private static List<EntityType<? extends Zombie>> zombieTypes() {
-        return List.of(EntityTypes.ZOMBIE, EntityTypes.HUSK, EntityTypes.DROWNED,
-                EntityTypes.ZOMBIE_VILLAGER, EntityTypes.ZOMBIFIED_PIGLIN);
+        return List.of(EntityTypes.ZOMBIE, EntityTypes.HUSK, EntityTypes.DROWNED, EntityTypes.ZOMBIE_VILLAGER,
+                EntityTypes.ZOMBIFIED_PIGLIN);
     }
 
     private static List<EntityType<? extends Mob>> mountTypes() {
-        return List.of(EntityTypes.WOLF, EntityTypes.OCELOT, EntityTypes.CAT, EntityTypes.PIG,
-                EntityTypes.SHEEP, EntityTypes.COW, EntityTypes.MOOSHROOM, EntityTypes.FOX, EntityTypes.PANDA,
-                EntityTypes.LLAMA, EntityTypes.TRADER_LLAMA, EntityTypes.SPIDER, EntityTypes.CAVE_SPIDER,
-                EntityTypes.HORSE, EntityTypes.DONKEY, EntityTypes.MULE, EntityTypes.SKELETON_HORSE,
-                EntityTypes.ZOMBIE_HORSE, EntityTypes.ZOMBIE, EntityTypes.HUSK, EntityTypes.DROWNED,
-                EntityTypes.ZOMBIE_VILLAGER, EntityTypes.ZOMBIFIED_PIGLIN);
+        return List.of(EntityTypes.WOLF, EntityTypes.OCELOT, EntityTypes.CAT, EntityTypes.PIG, EntityTypes.SHEEP,
+                EntityTypes.COW, EntityTypes.MOOSHROOM, EntityTypes.FOX, EntityTypes.PANDA, EntityTypes.LLAMA,
+                EntityTypes.TRADER_LLAMA, EntityTypes.SPIDER, EntityTypes.CAVE_SPIDER, EntityTypes.HORSE,
+                EntityTypes.DONKEY, EntityTypes.MULE, EntityTypes.SKELETON_HORSE, EntityTypes.ZOMBIE_HORSE,
+                EntityTypes.ZOMBIE, EntityTypes.HUSK, EntityTypes.DROWNED, EntityTypes.ZOMBIE_VILLAGER,
+                EntityTypes.ZOMBIFIED_PIGLIN);
     }
 
     private static Zombie eligibleBaby(GameTestHelper helper) {
@@ -380,9 +388,9 @@ public class JockeyAndHealthGameTests {
 
     private static float healthFor(Difficulty difficulty) {
         return switch (difficulty) {
-            case NORMAL -> 450;
-            case HARD -> 600;
-            default -> 300;
+        case NORMAL -> 450;
+        case HARD -> 600;
+        default -> 300;
         };
     }
 

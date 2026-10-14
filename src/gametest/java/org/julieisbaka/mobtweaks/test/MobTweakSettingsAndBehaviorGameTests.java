@@ -11,7 +11,6 @@ import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.Mob;
@@ -42,7 +41,8 @@ public class MobTweakSettingsAndBehaviorGameTests {
             GameRule<Boolean> rule = MobTweaksGameRules.get(tweak);
             helper.assertTrue(helper.getLevel().getGameRules().get(rule), "World rule should default on: " + tweak);
             helper.assertTrue(MobTweaksConfig.isEnabled(tweak), "Config setting should default on: " + tweak);
-            helper.assertTrue(MobTweaksSettings.isEnabled(helper.getLevel(), tweak), "Tweak should default on: " + tweak);
+            helper.assertTrue(MobTweaksSettings.isEnabled(helper.getLevel(), tweak),
+                    "Tweak should default on: " + tweak);
         }
         helper.succeed();
     }
@@ -53,9 +53,9 @@ public class MobTweakSettingsAndBehaviorGameTests {
         GameRule<Boolean> rule = MobTweaksGameRules.get(disabled);
         try {
             helper.getLevel().getGameRules().set(rule, false, helper.getLevel().getServer());
-            helper.assertTrue(!MobTweaksSettings.isEnabled(helper.getLevel(), disabled), "Disabled rule must disable its tweak");
-            helper.assertTrue(
-                    MobTweaksSettings.isEnabled(helper.getLevel(), MobTweak.RAVAGER_TURTLE_EGGS),
+            helper.assertTrue(!MobTweaksSettings.isEnabled(helper.getLevel(), disabled),
+                    "Disabled rule must disable its tweak");
+            helper.assertTrue(MobTweaksSettings.isEnabled(helper.getLevel(), MobTweak.RAVAGER_TURTLE_EGGS),
                     "Other tweaks must remain enabled");
         } finally {
             helper.getLevel().getGameRules().set(rule, true, helper.getLevel().getServer());
@@ -68,8 +68,7 @@ public class MobTweakSettingsAndBehaviorGameTests {
         GameRule<Boolean> rule = MobTweaksGameRules.get(MobTweak.CUBES_SMALL_SPAWNING);
         try {
             helper.getLevel().getGameRules().set(rule, false, helper.getLevel().getServer());
-            var spawnBox = CubeSpawnClearance.getSpawnBox(
-                    EntityTypes.SLIME, helper.getLevel(), 4.5, 3.0, 4.5);
+            var spawnBox = CubeSpawnClearance.getSpawnBox(EntityTypes.SLIME, helper.getLevel(), 4.5, 3.0, 4.5);
             helper.assertTrue(spawnBox.getXsize() > 2.0, "Disabled rule must restore normal slime clearance");
         } finally {
             helper.getLevel().getGameRules().set(rule, true, helper.getLevel().getServer());
@@ -90,10 +89,7 @@ public class MobTweakSettingsAndBehaviorGameTests {
             helper.assertTrue(rider.startRiding(horse, true, true), "Test rider should mount horse");
             Vec3 forward = horse.getLookAngle().multiply(1.0, 0.0, 1.0).normalize();
             Monster attacker = createMob(helper, EntityTypes.ZOMBIE);
-            attacker.setPos(
-                    horse.getX() - forward.x * 4.0,
-                    horse.getY(),
-                    horse.getZ() - forward.z * 4.0);
+            attacker.setPos(horse.getX() - forward.x * 4.0, horse.getY(), horse.getZ() - forward.z * 4.0);
             helper.getLevel().addFreshEntity(attacker);
 
             horse.clearStanding();
@@ -125,10 +121,7 @@ public class MobTweakSettingsAndBehaviorGameTests {
                 rider.startRiding(horse, true, true);
                 Vec3 forward = horse.getLookAngle().multiply(1.0, 0.0, 1.0).normalize();
                 Monster attacker = createMob(helper, EntityTypes.ZOMBIE);
-                attacker.setPos(
-                        horse.getX() - forward.x * 4.0,
-                        horse.getY(),
-                        horse.getZ() - forward.z * 4.0);
+                attacker.setPos(horse.getX() - forward.x * 4.0, horse.getY(), horse.getZ() - forward.z * 4.0);
                 helper.getLevel().addFreshEntity(attacker);
 
                 horse.aiStep();
@@ -156,31 +149,30 @@ public class MobTweakSettingsAndBehaviorGameTests {
         helper.getLevel().addFreshEntity(skeleton);
         helper.getLevel().addFreshEntity(target);
         int floorY = BlockPos.containing(skeleton.getX(), skeleton.getY(), skeleton.getZ()).getY() - 1;
-        for (int x = BlockPos.containing(skeleton.getX(), skeleton.getY(), skeleton.getZ()).getX() - 4;
-             x <= BlockPos.containing(skeleton.getX(), skeleton.getY(), skeleton.getZ()).getX() + 6; x++) {
-            for (int z = BlockPos.containing(skeleton.getX(), skeleton.getY(), skeleton.getZ()).getZ() - 4;
-                 z <= BlockPos.containing(skeleton.getX(), skeleton.getY(), skeleton.getZ()).getZ() + 6; z++) {
+        for (int x = BlockPos.containing(skeleton.getX(), skeleton.getY(), skeleton.getZ()).getX() - 4; x <= BlockPos
+                .containing(skeleton.getX(), skeleton.getY(), skeleton.getZ()).getX() + 6; x++) {
+            for (int z = BlockPos.containing(skeleton.getX(), skeleton.getY(), skeleton.getZ()).getZ()
+                    - 4; z <= BlockPos.containing(skeleton.getX(), skeleton.getY(), skeleton.getZ()).getZ() + 6; z++) {
                 helper.getLevel().setBlockAndUpdate(new BlockPos(x, floorY, z), Blocks.STONE.defaultBlockState());
             }
         }
         int eyeY = net.minecraft.util.Mth.floor(skeleton.getEyeY());
-        for (int x = net.minecraft.util.Mth.floor(skeleton.getX()); x <= net.minecraft.util.Mth.floor(target.getX()); x++) {
+        for (int x = net.minecraft.util.Mth.floor(skeleton.getX()); x <= net.minecraft.util.Mth
+                .floor(target.getX()); x++) {
             for (int y = eyeY - 1; y <= eyeY + 1; y++) {
-                helper.getLevel().setBlockAndUpdate(
-                        new BlockPos(x, y, net.minecraft.util.Mth.floor(skeleton.getZ())),
+                helper.getLevel().setBlockAndUpdate(new BlockPos(x, y, net.minecraft.util.Mth.floor(skeleton.getZ())),
                         Blocks.AIR.defaultBlockState());
             }
         }
         BlockPos wall = BlockPos.containing(skeleton.getX() + 3.0, skeleton.getY(), skeleton.getZ() + 3.0);
         helper.getLevel().setBlockAndUpdate(wall, Blocks.STONE.defaultBlockState());
         helper.getLevel().setBlockAndUpdate(wall.above(), Blocks.STONE.defaultBlockState());
-        helper.assertTrue(skeleton.hasLineOfSight(target), "Test wall should leave the skeleton's current path exposed");
+        helper.assertTrue(skeleton.hasLineOfSight(target),
+                "Test wall should leave the skeleton's current path exposed");
 
         SkeletonCoverGoal goal = skeleton.getGoalSelector().getAvailableGoals().stream()
-                .map(wrappedGoal -> wrappedGoal.getGoal())
-                .filter(SkeletonCoverGoal.class::isInstance)
-                .map(SkeletonCoverGoal.class::cast)
-                .findFirst()
+                .map(wrappedGoal -> wrappedGoal.getGoal()).filter(SkeletonCoverGoal.class::isInstance)
+                .map(SkeletonCoverGoal.class::cast).findFirst()
                 .orElseThrow(() -> new IllegalStateException("Skeleton cover goal was not registered"));
         skeleton.performRangedAttack(target, 1.0F);
         helper.assertTrue(goal.canUse(), "Skeleton should find nearby cover after firing its bow");
@@ -189,7 +181,7 @@ public class MobTweakSettingsAndBehaviorGameTests {
         boolean navigationStarted = pathTarget != null && !pathTarget.equals(skeleton.blockPosition());
         boolean steeringStarted = skeleton.getMoveControl().hasWanted()
                 && (skeleton.getMoveControl().getWantedX() != skeleton.getX()
-                || skeleton.getMoveControl().getWantedZ() != skeleton.getZ());
+                        || skeleton.getMoveControl().getWantedZ() != skeleton.getZ());
         helper.assertTrue(navigationStarted || steeringStarted,
                 "Skeleton should move toward the block that hides it from its target");
         goal.tick();
@@ -277,10 +269,7 @@ public class MobTweakSettingsAndBehaviorGameTests {
     private static EmbeddedChannel connectPlayer(GameTestHelper helper, ServerPlayer player) {
         Connection connection = new Connection(PacketFlow.SERVERBOUND);
         EmbeddedChannel channel = new EmbeddedChannel(connection);
-        new ServerGamePacketListenerImpl(
-                helper.getLevel().getServer(),
-                connection,
-                player,
+        new ServerGamePacketListenerImpl(helper.getLevel().getServer(), connection, player,
                 CommonListenerCookie.createInitial(player.getGameProfile(), false));
         for (int i = 0; i < 60; i++) {
             player.connection.tickClientLoadTimeout();

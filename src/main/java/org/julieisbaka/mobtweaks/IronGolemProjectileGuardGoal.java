@@ -28,16 +28,14 @@ public class IronGolemProjectileGuardGoal extends Goal {
     @Override
     public boolean canUse() {
         if (!(this.golem.level() instanceof ServerLevel level)
-                || !MobTweaksSettings.isEnabled(level, MobTweak.IRON_GOLEM_PROJECTILE_GUARD)
-                || !this.golem.isAlive() || this.golem.isNoAi()) {
+                || !MobTweaksSettings.isEnabled(level, MobTweak.IRON_GOLEM_PROJECTILE_GUARD) || !this.golem.isAlive()
+                || this.golem.isNoAi()) {
             return false;
         }
 
         AABB searchArea = this.golem.getBoundingBox().inflate(THREAT_RANGE);
         var villagers = level.getEntitiesOfClass(Villager.class, searchArea, Villager::isAlive);
-        var projectiles = level.getEntitiesOfClass(
-                Projectile.class,
-                searchArea,
+        var projectiles = level.getEntitiesOfClass(Projectile.class, searchArea,
                 candidate -> candidate.isAlive() && candidate.getOwner() instanceof Monster);
 
         double closestThreat = Double.MAX_VALUE;
@@ -61,9 +59,7 @@ public class IronGolemProjectileGuardGoal extends Goal {
                     this.villager = protectedVillager;
                     this.projectile = candidate;
                     Vec3 towardShooter = start.subtract(protectedVillager.position()).normalize();
-                    double separation = this.golem.getBbWidth() / 2.0
-                            + protectedVillager.getBbWidth() / 2.0
-                            + 0.15;
+                    double separation = this.golem.getBbWidth() / 2.0 + protectedVillager.getBbWidth() / 2.0 + 0.15;
                     this.guardPosition = protectedVillager.position().add(towardShooter.scale(separation));
                 }
             }
@@ -76,9 +72,7 @@ public class IronGolemProjectileGuardGoal extends Goal {
     public boolean canContinueToUse() {
         return this.golem.isAlive()
                 && MobTweaksSettings.isEnabled(this.golem.level(), MobTweak.IRON_GOLEM_PROJECTILE_GUARD)
-                && this.villager != null
-                && this.villager.isAlive()
-                && this.golem.tickCount < this.guardUntil;
+                && this.villager != null && this.villager.isAlive() && this.golem.tickCount < this.guardUntil;
     }
 
     @Override
@@ -91,9 +85,7 @@ public class IronGolemProjectileGuardGoal extends Goal {
     public void tick() {
         if (this.projectile != null && this.projectile.isAlive() && this.villager.isAlive()) {
             Vec3 towardShooter = this.projectile.position().subtract(this.villager.position()).normalize();
-            double separation = this.golem.getBbWidth() / 2.0
-                    + this.villager.getBbWidth() / 2.0
-                    + 0.15;
+            double separation = this.golem.getBbWidth() / 2.0 + this.villager.getBbWidth() / 2.0 + 0.15;
             this.guardPosition = this.villager.position().add(towardShooter.scale(separation));
         }
         this.moveBetweenThreatAndVillager();
@@ -109,8 +101,8 @@ public class IronGolemProjectileGuardGoal extends Goal {
 
     private void moveBetweenThreatAndVillager() {
         if (this.guardPosition != null) {
-            this.golem.getMoveControl().setWantedPosition(
-                    this.guardPosition.x, this.guardPosition.y, this.guardPosition.z, 1.0);
+            this.golem.getMoveControl().setWantedPosition(this.guardPosition.x, this.guardPosition.y,
+                    this.guardPosition.z, 1.0);
             this.golem.getLookControl().setLookAt(this.villager, 30.0F, 30.0F);
         }
     }

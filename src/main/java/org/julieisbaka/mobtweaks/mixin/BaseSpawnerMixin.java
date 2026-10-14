@@ -12,10 +12,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(BaseSpawner.class)
 abstract class BaseSpawnerMixin {
-    @Redirect(method = "serverTick", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/world/entity/EntityType;getSpawnAABB(DDD)Lnet/minecraft/world/phys/AABB;"))
-    private static AABB mobTweaks$checkSpawnerSpawnBox(
-            EntityType<?> type, double x, double y, double z, ServerLevel level, BlockPos pos) {
+    @Redirect(method = "serverTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/EntityType;getSpawnAABB(DDD)Lnet/minecraft/world/phys/AABB;"))
+    private static AABB mobTweaks$checkSpawnerSpawnBox(EntityType<?> type, double x, double y, double z,
+            ServerLevel level, BlockPos pos) {
         return CubeSpawnClearance.getSpawnBox(type, level, x, y, z);
     }
 }

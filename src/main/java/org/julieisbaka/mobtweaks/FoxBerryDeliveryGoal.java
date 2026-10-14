@@ -33,12 +33,8 @@ public class FoxBerryDeliveryGoal extends Goal {
         if (!(this.fox.level() instanceof ServerLevel level)) {
             return false;
         }
-        if (this.fox.isBaby()
-                || !this.fox.isAlive()
-                || this.fox.getTarget() != null
-                || this.fox.isAggressive()
-                || this.fox.isSleeping()
-                || this.fox.isSitting()
+        if (this.fox.isBaby() || !this.fox.isAlive() || this.fox.getTarget() != null || this.fox.isAggressive()
+                || this.fox.isSleeping() || this.fox.isSitting()
                 || !MobTweaksSettings.isEnabled(level, MobTweak.FOX_BERRY_DELIVERY)) {
             return false;
         }
@@ -59,8 +55,7 @@ public class FoxBerryDeliveryGoal extends Goal {
             this.berryBush = null;
             return true;
         }
-        if (!heldItem.isEmpty()
-                || !level.getGameRules().get(GameRules.MOB_GRIEFING)) {
+        if (!heldItem.isEmpty() || !level.getGameRules().get(GameRules.MOB_GRIEFING)) {
             return false;
         }
 
@@ -74,16 +69,10 @@ public class FoxBerryDeliveryGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        return !this.delivered
-                && this.fox.isAlive()
-                && this.baby != null
-                && this.baby.isAlive()
-                && this.baby.isBaby()
-                && this.baby.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty()
-                && this.fox.getTarget() == null
+        return !this.delivered && this.fox.isAlive() && this.baby != null && this.baby.isAlive() && this.baby.isBaby()
+                && this.baby.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty() && this.fox.getTarget() == null
                 && MobTweaksSettings.isEnabled(this.fox.level(), MobTweak.FOX_BERRY_DELIVERY)
-                && !this.fox.isAggressive()
-                && !this.fox.isSleeping();
+                && !this.fox.isAggressive() && !this.fox.isSleeping();
     }
 
     @Override
@@ -154,11 +143,9 @@ public class FoxBerryDeliveryGoal extends Goal {
     }
 
     private Fox findNearbyBaby() {
-        return this.fox.level().getEntitiesOfClass(
-                        Fox.class,
-                        this.fox.getBoundingBox().inflate(16.0),
-                        candidate -> candidate.isBaby()
-                                && candidate.isAlive()
+        return this.fox.level()
+                .getEntitiesOfClass(Fox.class, this.fox.getBoundingBox().inflate(16.0),
+                        candidate -> candidate.isBaby() && candidate.isAlive()
                                 && candidate.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty())
                 .stream()
                 .min((first, second) -> Double.compare(this.fox.distanceToSqr(first), this.fox.distanceToSqr(second)))
@@ -169,8 +156,7 @@ public class FoxBerryDeliveryGoal extends Goal {
         BlockPos origin = this.fox.blockPosition();
         BlockPos closest = null;
         double closestDistance = Double.MAX_VALUE;
-        for (BlockPos pos : BlockPos.betweenClosed(
-                origin.offset(-12, -4, -12), origin.offset(12, 4, 12))) {
+        for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-12, -4, -12), origin.offset(12, 4, 12))) {
             if (!this.isRipeBerryBush((ServerLevel) this.fox.level(), pos)) {
                 continue;
             }
@@ -185,8 +171,7 @@ public class FoxBerryDeliveryGoal extends Goal {
     }
 
     private boolean isRipeBerryBush(ServerLevel level, BlockPos pos) {
-        return pos != null
-                && level.getBlockState(pos).is(Blocks.SWEET_BERRY_BUSH)
+        return pos != null && level.getBlockState(pos).is(Blocks.SWEET_BERRY_BUSH)
                 && level.getBlockState(pos).getValue(SweetBerryBushBlock.AGE) >= 2;
     }
 

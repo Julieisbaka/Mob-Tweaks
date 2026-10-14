@@ -15,8 +15,7 @@ public final class MobTweaksGameRules {
 
     public static void register() {
         for (MobTweak tweak : MobTweak.values()) {
-            GameRule<Boolean> rule = GameRuleBuilder.forBoolean(true)
-                    .category(GameRuleCategory.MOBS)
+            GameRule<Boolean> rule = GameRuleBuilder.forBoolean(true).category(GameRuleCategory.MOBS)
                     .buildAndRegister(Identifier.fromNamespaceAndPath("mob_tweaks", tweak.key()));
             RULES.put(tweak, rule);
         }

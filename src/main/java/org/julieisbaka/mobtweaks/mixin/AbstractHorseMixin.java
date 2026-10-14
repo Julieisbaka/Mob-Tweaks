@@ -1,11 +1,9 @@
 package org.julieisbaka.mobtweaks.mixin;
 
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.julieisbaka.mobtweaks.MobTweak;
 import org.julieisbaka.mobtweaks.MobTweaksSettings;
@@ -25,8 +23,7 @@ abstract class AbstractHorseMixin {
         AbstractHorse horse = (AbstractHorse) (Object) this;
         if (!(horse.level() instanceof ServerLevel level)
                 || !MobTweaksSettings.isEnabled(level, MobTweak.HORSE_REAR_WARNING)
-                || !(horse.getControllingPassenger() instanceof Player)
-                || horse.isStanding()
+                || !(horse.getControllingPassenger() instanceof Player) || horse.isStanding()
                 || horse.tickCount < this.mobTweaks$nextRearWarningTick) {
             return;
         }
@@ -35,14 +32,11 @@ abstract class AbstractHorseMixin {
         if (forward.lengthSqr() < 0.5) {
             return;
         }
-        boolean threatBehind = level.getEntitiesOfClass(
-                        Monster.class,
-                        horse.getBoundingBox().inflate(8.0),
-                        Monster::isAlive)
-                .stream()
+        boolean threatBehind = level
+                .getEntitiesOfClass(Monster.class, horse.getBoundingBox().inflate(8.0), Monster::isAlive).stream()
                 .anyMatch(monster -> {
-                    Vec3 towardThreat = monster.position().subtract(horse.position())
-                            .multiply(1.0, 0.0, 1.0).normalize();
+                    Vec3 towardThreat = monster.position().subtract(horse.position()).multiply(1.0, 0.0, 1.0)
+                            .normalize();
                     return forward.dot(towardThreat) < -0.5;
                 });
         if (threatBehind) {

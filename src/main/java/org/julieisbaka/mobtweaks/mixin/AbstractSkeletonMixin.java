@@ -33,8 +33,7 @@ abstract class AbstractSkeletonMixin extends Monster {
 
     @Inject(method = "performRangedAttack", at = @At("TAIL"))
     private void mobTweaks$beginBowReloadCover(LivingEntity target, float velocity, CallbackInfo ci) {
-        if (this.mobTweaks$coverGoal != null
-                && this.level() instanceof ServerLevel level
+        if (this.mobTweaks$coverGoal != null && this.level() instanceof ServerLevel level
                 && MobTweaksSettings.isEnabled(level, MobTweak.SKELETON_COVER)) {
             this.mobTweaks$coverGoal.beginReload();
         }

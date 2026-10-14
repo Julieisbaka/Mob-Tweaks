@@ -19,20 +19,16 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(NaturalSpawner.class)
 abstract class NaturalSpawnerMixin {
-    @Redirect(method = "isValidSpawnPostitionForType", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/world/entity/EntityType;getSpawnAABB(DDD)Lnet/minecraft/world/phys/AABB;"))
-    private static AABB mobTweaks$checkSpawnPositionBox(
-            EntityType<?> type, double x, double y, double z, ServerLevel level, MobCategory category,
-            StructureManager structures, ChunkGenerator generator, MobSpawnSettings.SpawnerData spawnData,
-            BlockPos.MutableBlockPos pos, double distance) {
+    @Redirect(method = "isValidSpawnPostitionForType", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/EntityType;getSpawnAABB(DDD)Lnet/minecraft/world/phys/AABB;"))
+    private static AABB mobTweaks$checkSpawnPositionBox(EntityType<?> type, double x, double y, double z,
+            ServerLevel level, MobCategory category, StructureManager structures, ChunkGenerator generator,
+            MobSpawnSettings.SpawnerData spawnData, BlockPos.MutableBlockPos pos, double distance) {
         return CubeSpawnClearance.getSpawnBox(type, level, x, y, z);
     }
 
-    @Redirect(method = "spawnMobsForChunkGeneration", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/world/entity/EntityType;getSpawnAABB(DDD)Lnet/minecraft/world/phys/AABB;"))
-    private static AABB mobTweaks$checkChunkGenerationSpawnBox(
-            EntityType<?> type, double x, double y, double z, ServerLevelAccessor level,
-            BlockPos pos, ChunkPos chunkPos, RandomSource random) {
+    @Redirect(method = "spawnMobsForChunkGeneration", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/EntityType;getSpawnAABB(DDD)Lnet/minecraft/world/phys/AABB;"))
+    private static AABB mobTweaks$checkChunkGenerationSpawnBox(EntityType<?> type, double x, double y, double z,
+            ServerLevelAccessor level, BlockPos pos, ChunkPos chunkPos, RandomSource random) {
         return CubeSpawnClearance.getSpawnBox(type, level.getLevel(), x, y, z);
     }
 }

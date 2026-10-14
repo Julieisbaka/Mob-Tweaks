@@ -2,10 +2,8 @@ package org.julieisbaka.mobtweaks.mixin;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Enderman;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.phys.AABB;
@@ -40,8 +38,7 @@ abstract class EndermanMixin {
         if (attacker == null || !attacker.isAlive()) {
             attacker = enderman.getLastHurtByMob();
         }
-        if (attacker == null || !attacker.isAlive()
-                || enderman.distanceToSqr(attacker) < 4.0
+        if (attacker == null || !attacker.isAlive() || enderman.distanceToSqr(attacker) < 4.0
                 || enderman.distanceToSqr(attacker) > 64.0) {
             return;
         }
@@ -50,20 +47,14 @@ abstract class EndermanMixin {
         if (carried == null || carried.isAir()) {
             return;
         }
-        Vec3 towardAttacker = attacker.position().subtract(enderman.position())
-                .multiply(1.0, 0.0, 1.0).normalize();
-        BlockPos position = BlockPos.containing(
-                enderman.getX() + towardAttacker.x * 1.25,
-                enderman.getY(),
+        Vec3 towardAttacker = attacker.position().subtract(enderman.position()).multiply(1.0, 0.0, 1.0).normalize();
+        BlockPos position = BlockPos.containing(enderman.getX() + towardAttacker.x * 1.25, enderman.getY(),
                 enderman.getZ() + towardAttacker.z * 1.25);
         BlockState existing = level.getBlockState(position);
-        AABB placementBounds = new AABB(
-                position.getX(), position.getY(), position.getZ(),
-                position.getX() + 1.0, position.getY() + 1.0, position.getZ() + 1.0);
-        if (!existing.isAir()
-                || carried.getCollisionShape(level, position).isEmpty()
-                || !carried.canSurvive(level, position)
-                || !level.noCollision(enderman, placementBounds)
+        AABB placementBounds = new AABB(position.getX(), position.getY(), position.getZ(), position.getX() + 1.0,
+                position.getY() + 1.0, position.getZ() + 1.0);
+        if (!existing.isAir() || carried.getCollisionShape(level, position).isEmpty()
+                || !carried.canSurvive(level, position) || !level.noCollision(enderman, placementBounds)
                 || !level.setBlock(position, carried, 3)) {
             return;
         }

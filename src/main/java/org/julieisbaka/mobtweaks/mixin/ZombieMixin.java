@@ -35,8 +35,7 @@ abstract class ZombieMixin extends Monster {
 
     @Inject(method = "finalizeSpawn", at = @At("TAIL"))
     private void mobTweaks$rollJockey(ServerLevelAccessor level, DifficultyInstance difficulty,
-                                     EntitySpawnReason reason, SpawnGroupData groupData,
-                                     CallbackInfoReturnable<SpawnGroupData> cir) {
+            EntitySpawnReason reason, SpawnGroupData groupData, CallbackInfoReturnable<SpawnGroupData> cir) {
         this.mobTweaks$jockeyGoal.initialize(reason);
     }
 

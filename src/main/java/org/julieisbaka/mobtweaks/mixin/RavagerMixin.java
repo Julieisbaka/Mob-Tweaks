@@ -36,9 +36,8 @@ abstract class RavagerMixin extends Raider {
 
     @Inject(method = "aiStep", at = @At("TAIL"))
     private void mobTweaks$crushEggs(CallbackInfo ci) {
-        if (!(this.level() instanceof ServerLevel level) || !this.isAlive() || this.isNoAi()
-                || this.isImmobile() || this.getTarget() == null
-                || !MobTweaksSettings.isEnabled(level, MobTweak.RAVAGER_TURTLE_EGGS)
+        if (!(this.level() instanceof ServerLevel level) || !this.isAlive() || this.isNoAi() || this.isImmobile()
+                || this.getTarget() == null || !MobTweaksSettings.isEnabled(level, MobTweak.RAVAGER_TURTLE_EGGS)
                 || !level.getGameRules().get(GameRules.MOB_GRIEFING)) {
             return;
         }
@@ -50,8 +49,7 @@ abstract class RavagerMixin extends Raider {
             return;
         }
         AABB path = before.minmax(after).inflate(0.0, 0.25, 0.0);
-        for (BlockPos pos : BlockPos.betweenClosed(
-                Mth.floor(path.minX), Mth.floor(path.minY), Mth.floor(path.minZ),
+        for (BlockPos pos : BlockPos.betweenClosed(Mth.floor(path.minX), Mth.floor(path.minY), Mth.floor(path.minZ),
                 Mth.floor(path.maxX), Mth.floor(path.maxY), Mth.floor(path.maxZ))) {
             if (level.getBlockState(pos).is(Blocks.TURTLE_EGG) && level.destroyBlock(pos, false, this)) {
                 level.playSound(null, pos, SoundEvents.TURTLE_EGG_BREAK, SoundSource.BLOCKS, 0.7F, 1.0F);

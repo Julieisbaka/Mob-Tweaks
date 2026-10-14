@@ -25,8 +25,8 @@ public class FoxBerryGameTests {
         helper.getLevel().addFreshEntity(parent);
         helper.getLevel().addFreshEntity(kit);
         BlockPos bush = parent.blockPosition().east();
-        helper.getLevel().setBlockAndUpdate(
-                bush, Blocks.SWEET_BERRY_BUSH.defaultBlockState().setValue(SweetBerryBushBlock.AGE, 3));
+        helper.getLevel().setBlockAndUpdate(bush,
+                Blocks.SWEET_BERRY_BUSH.defaultBlockState().setValue(SweetBerryBushBlock.AGE, 3));
 
         helper.assertTrue(
                 parent.getGoalSelector().getAvailableGoals().stream()
@@ -37,14 +37,11 @@ public class FoxBerryGameTests {
         goal.start();
         goal.tick();
 
-        helper.assertTrue(
-                helper.getLevel().getBlockState(bush).getValue(SweetBerryBushBlock.AGE) == 2,
+        helper.assertTrue(helper.getLevel().getBlockState(bush).getValue(SweetBerryBushBlock.AGE) == 2,
                 "Parent fox should pick berries from a ripe bush");
-        helper.assertTrue(
-                kit.getItemBySlot(EquipmentSlot.MAINHAND).is(Items.SWEET_BERRIES),
+        helper.assertTrue(kit.getItemBySlot(EquipmentSlot.MAINHAND).is(Items.SWEET_BERRIES),
                 "Kit should receive and hold the berries");
-        helper.assertTrue(
-                parent.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty(),
+        helper.assertTrue(parent.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty(),
                 "Parent should give away the berries it gathered");
         helper.succeed();
     }
@@ -61,14 +58,12 @@ public class FoxBerryGameTests {
             helper.getLevel().addFreshEntity(parent);
             helper.getLevel().addFreshEntity(kit);
             BlockPos bush = parent.blockPosition().east();
-            helper.getLevel().setBlockAndUpdate(
-                    bush, Blocks.SWEET_BERRY_BUSH.defaultBlockState().setValue(SweetBerryBushBlock.AGE, 3));
+            helper.getLevel().setBlockAndUpdate(bush,
+                    Blocks.SWEET_BERRY_BUSH.defaultBlockState().setValue(SweetBerryBushBlock.AGE, 3));
 
-            helper.assertTrue(
-                    !new FoxBerryDeliveryGoal(parent).canUse(),
+            helper.assertTrue(!new FoxBerryDeliveryGoal(parent).canUse(),
                     "Foxes must not harvest berries when mobGriefing is disabled");
-            helper.assertTrue(
-                    helper.getLevel().getBlockState(bush).getValue(SweetBerryBushBlock.AGE) == 3,
+            helper.assertTrue(helper.getLevel().getBlockState(bush).getValue(SweetBerryBushBlock.AGE) == 3,
                     "Disabling mobGriefing must preserve ripe bushes");
         } finally {
             helper.getLevel().getGameRules().set(GameRules.MOB_GRIEFING, original, helper.getLevel().getServer());
@@ -84,17 +79,15 @@ public class FoxBerryGameTests {
         kit.setPos(parent.getX() + 1, parent.getY(), parent.getZ());
         kit.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.CHICKEN));
         helper.assertTrue(kit.isBaby(), "Test fox should be a kit");
-        helper.assertTrue(
-                kit.getItemBySlot(EquipmentSlot.MAINHAND).is(Items.CHICKEN),
+        helper.assertTrue(kit.getItemBySlot(EquipmentSlot.MAINHAND).is(Items.CHICKEN),
                 "Test kit should already be carrying food");
         helper.getLevel().addFreshEntity(parent);
         helper.getLevel().addFreshEntity(kit);
         BlockPos bush = parent.blockPosition().east();
-        helper.getLevel().setBlockAndUpdate(
-                bush, Blocks.SWEET_BERRY_BUSH.defaultBlockState().setValue(SweetBerryBushBlock.AGE, 3));
+        helper.getLevel().setBlockAndUpdate(bush,
+                Blocks.SWEET_BERRY_BUSH.defaultBlockState().setValue(SweetBerryBushBlock.AGE, 3));
 
-        helper.assertTrue(
-                !new FoxBerryDeliveryGoal(parent).canUse(),
+        helper.assertTrue(!new FoxBerryDeliveryGoal(parent).canUse(),
                 "Parent should not try to replace an item the kit is already carrying");
         helper.assertTrue(kit.getItemBySlot(EquipmentSlot.MAINHAND).is(Items.CHICKEN), "Kit's food must be preserved");
         helper.succeed();

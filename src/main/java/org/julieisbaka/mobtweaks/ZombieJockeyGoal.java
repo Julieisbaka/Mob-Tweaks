@@ -67,8 +67,8 @@ public final class ZombieJockeyGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        if (!this.eligible || !this.zombie.isBaby() || !this.zombie.isAlive()
-                || this.zombie.isNoAi() || this.zombie.isPassenger()
+        if (!this.eligible || !this.zombie.isBaby() || !this.zombie.isAlive() || this.zombie.isNoAi()
+                || this.zombie.isPassenger()
                 || !MobTweaksSettings.isEnabled(this.zombie.level(), MobTweak.BABY_ZOMBIE_JOCKEYS)) {
             return false;
         }
@@ -77,9 +77,10 @@ public final class ZombieJockeyGoal extends Goal {
             return false;
         }
         this.searchTicks = reducedTickDelay(20);
-        this.mount = this.zombie.level().getEntitiesOfClass(Mob.class,
-                        this.zombie.getBoundingBox().inflate(8.0, 4.0, 8.0), this::isEligibleMount).stream()
-                .filter(this.zombie::hasLineOfSight)
+        this.mount = this.zombie.level()
+                .getEntitiesOfClass(Mob.class, this.zombie.getBoundingBox().inflate(8.0, 4.0, 8.0),
+                        this::isEligibleMount)
+                .stream().filter(this.zombie::hasLineOfSight)
                 .min(Comparator.comparingDouble(this.zombie::distanceToSqr)).orElse(null);
         return this.mount != null;
     }

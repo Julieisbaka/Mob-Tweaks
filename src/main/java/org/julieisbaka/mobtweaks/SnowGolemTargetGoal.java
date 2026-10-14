@@ -14,8 +14,7 @@ public final class SnowGolemTargetGoal extends NearestAttackableTargetGoal<SnowG
 
     @Override
     public boolean canUse() {
-        return MobTweaksSettings.isEnabled(this.cube.level(), MobTweak.CUBES_ATTACK_SNOW_GOLEMS)
-                && super.canUse();
+        return MobTweaksSettings.isEnabled(this.cube.level(), MobTweak.CUBES_ATTACK_SNOW_GOLEMS) && super.canUse();
     }
 
     @Override

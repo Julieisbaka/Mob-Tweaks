@@ -6,7 +6,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.SpawnGroupData;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.golem.SnowGolem;
 import net.minecraft.world.entity.monster.cubemob.AbstractCubeMob;
 import net.minecraft.world.entity.monster.cubemob.Slime;
@@ -55,8 +54,7 @@ abstract class CubeMobMixin extends Mob {
 
     @Inject(method = "finalizeSpawn", at = @At("TAIL"))
     private void mobTweaks$fitSpawnSpace(ServerLevelAccessor level, DifficultyInstance difficulty,
-                                         EntitySpawnReason reason, SpawnGroupData data,
-                                         CallbackInfoReturnable<SpawnGroupData> cir) {
+            EntitySpawnReason reason, SpawnGroupData data, CallbackInfoReturnable<SpawnGroupData> cir) {
         if (!((Object) this instanceof Slime || (Object) this instanceof MagmaCube)
                 || reason == EntitySpawnReason.CONVERSION || reason == EntitySpawnReason.LOAD
                 || reason == EntitySpawnReason.DIMENSION_TRAVEL

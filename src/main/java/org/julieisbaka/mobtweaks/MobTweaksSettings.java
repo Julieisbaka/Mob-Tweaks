@@ -17,8 +17,7 @@ public final class MobTweaksSettings {
     }
 
     public static boolean isEnabled(ServerLevel level, MobTweak tweak) {
-        return MobTweaksConfig.isEnabled(tweak)
-                && level.getGameRules().get(MobTweaksGameRules.get(tweak));
+        return MobTweaksConfig.isEnabled(tweak) && level.getGameRules().get(MobTweaksGameRules.get(tweak));
     }
 
     public static boolean isEnabled(ServerLevelAccessor level, MobTweak tweak) {

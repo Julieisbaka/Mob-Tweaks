@@ -25,9 +25,11 @@ public class RavagerGameTests {
     public void chargingRavagerCrushesEntireEggClutch(GameTestHelper helper) {
         Ravager ravager = chargingRavager(helper);
         BlockPos egg = ravager.blockPosition();
-        helper.getLevel().setBlockAndUpdate(egg, Blocks.TURTLE_EGG.defaultBlockState().setValue(TurtleEggBlock.EGGS, 4));
+        helper.getLevel().setBlockAndUpdate(egg,
+                Blocks.TURTLE_EGG.defaultBlockState().setValue(TurtleEggBlock.EGGS, 4));
         ravager.aiStep();
-        helper.assertTrue(helper.getLevel().getBlockState(egg).isAir(), "Charging ravager must crush all eggs in its path");
+        helper.assertTrue(helper.getLevel().getBlockState(egg).isAir(),
+                "Charging ravager must crush all eggs in its path");
         helper.succeed();
     }
 
@@ -56,7 +58,8 @@ public class RavagerGameTests {
         BlockPos egg = ravager.blockPosition();
         helper.getLevel().setBlockAndUpdate(egg, Blocks.TURTLE_EGG.defaultBlockState());
         ravager.aiStep();
-        helper.assertTrue(helper.getLevel().getBlockState(egg).is(Blocks.TURTLE_EGG), "Stationary ravager must not crush eggs");
+        helper.assertTrue(helper.getLevel().getBlockState(egg).is(Blocks.TURTLE_EGG),
+                "Stationary ravager must not crush eggs");
         helper.succeed();
     }
 

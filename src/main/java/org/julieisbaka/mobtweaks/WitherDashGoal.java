@@ -44,10 +44,9 @@ public final class WitherDashGoal extends Goal {
             this.shots = 0;
         }
         LivingEntity target = this.wither.getTarget();
-        return MobTweaksSettings.isEnabled(this.wither.level(), MobTweak.WITHER_DASH)
-                && this.shots >= 4 && this.wither.isAlive() && this.wither.isPowered()
-                && this.wither.getInvulnerableTicks() == 0 && target != null
-                && target.isAlive() && this.wither.canAttack(target);
+        return MobTweaksSettings.isEnabled(this.wither.level(), MobTweak.WITHER_DASH) && this.shots >= 4
+                && this.wither.isAlive() && this.wither.isPowered() && this.wither.getInvulnerableTicks() == 0
+                && target != null && target.isAlive() && this.wither.canAttack(target);
     }
 
     @Override
@@ -64,8 +63,8 @@ public final class WitherDashGoal extends Goal {
     @Override
     public boolean canContinueToUse() {
         LivingEntity target = this.wither.getTarget();
-        return MobTweaksSettings.isEnabled(this.wither.level(), MobTweak.WITHER_DASH)
-                && this.active && this.dashTicks > 0 && this.wither.isAlive() && this.wither.isPowered()
+        return MobTweaksSettings.isEnabled(this.wither.level(), MobTweak.WITHER_DASH) && this.active
+                && this.dashTicks > 0 && this.wither.isAlive() && this.wither.isPowered()
                 && this.wither.getInvulnerableTicks() == 0 && target != null && target.isAlive()
                 && this.wither.canAttack(target);
     }
@@ -85,8 +84,8 @@ public final class WitherDashGoal extends Goal {
         if (this.windupTicks > 0) {
             this.wither.getLookControl().setLookAt(target, 180.0F, 180.0F);
             if (--this.windupTicks == 0) {
-                this.direction = target.getBoundingBox().getCenter()
-                        .subtract(this.wither.getBoundingBox().getCenter()).normalize().scale(1.5);
+                this.direction = target.getBoundingBox().getCenter().subtract(this.wither.getBoundingBox().getCenter())
+                        .normalize().scale(1.5);
             }
             return;
         }
@@ -94,14 +93,13 @@ public final class WitherDashGoal extends Goal {
         this.breakBlocks(level);
         for (LivingEntity victim : level.getEntitiesOfClass(LivingEntity.class,
                 this.wither.getBoundingBox().expandTowards(this.direction).inflate(0.2))) {
-            if (victim != this.wither && !victim.is(EntityTypeTags.WITHER_FRIENDS)
-                    && this.wither.canAttack(victim) && this.wither.hasLineOfSight(victim)
-                    && this.hitEntities.add(victim.getUUID())
+            if (victim != this.wither && !victim.is(EntityTypeTags.WITHER_FRIENDS) && this.wither.canAttack(victim)
+                    && this.wither.hasLineOfSight(victim) && this.hitEntities.add(victim.getUUID())
                     && victim.hurtServer(level, this.wither.damageSources().mobAttack(this.wither), 30.0F)) {
                 int effectTicks = switch (level.getDifficulty()) {
-                    case NORMAL -> 200;
-                    case HARD -> 800;
-                    default -> 0;
+                case NORMAL -> 200;
+                case HARD -> 800;
+                default -> 0;
                 };
                 if (effectTicks > 0) {
                     victim.addEffect(new MobEffectInstance(MobEffects.WITHER, effectTicks, 1), this.wither);

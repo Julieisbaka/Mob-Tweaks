@@ -34,22 +34,16 @@ public final class SkeletonCoverGoal extends Goal {
     public boolean canUse() {
         return this.skeleton.level() instanceof ServerLevel
                 && MobTweaksSettings.isEnabled(this.skeleton.level(), MobTweak.SKELETON_COVER)
-                && this.skeleton.isAlive()
-                && this.skeleton.getTarget() != null
-                && this.skeleton.getTarget().isAlive()
+                && this.skeleton.isAlive() && this.skeleton.getTarget() != null && this.skeleton.getTarget().isAlive()
                 && this.skeleton.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND).is(Items.BOW)
-                && this.skeleton.tickCount < this.reloadUntil
-                && this.coverPosition != null;
+                && this.skeleton.tickCount < this.reloadUntil && this.coverPosition != null;
     }
 
     @Override
     public boolean canContinueToUse() {
         LivingEntity target = this.skeleton.getTarget();
-        return MobTweaksSettings.isEnabled(this.skeleton.level(), MobTweak.SKELETON_COVER)
-                && this.skeleton.isAlive()
-                && target != null
-                && target.isAlive()
-                && this.skeleton.tickCount < this.reloadUntil;
+        return MobTweaksSettings.isEnabled(this.skeleton.level(), MobTweak.SKELETON_COVER) && this.skeleton.isAlive()
+                && target != null && target.isAlive() && this.skeleton.tickCount < this.reloadUntil;
     }
 
     @Override
@@ -94,25 +88,17 @@ public final class SkeletonCoverGoal extends Goal {
         BlockPos origin = this.skeleton.blockPosition();
         BlockPos bestPosition = null;
         double bestDistance = Double.MAX_VALUE;
-        for (BlockPos candidate : BlockPos.betweenClosed(
-                origin.offset(-COVER_RANGE, -1, -COVER_RANGE),
+        for (BlockPos candidate : BlockPos.betweenClosed(origin.offset(-COVER_RANGE, -1, -COVER_RANGE),
                 origin.offset(COVER_RANGE, 1, COVER_RANGE))) {
-            if (!level.isEmptyBlock(candidate)
-                    || !level.isEmptyBlock(candidate.above())
+            if (!level.isEmptyBlock(candidate) || !level.isEmptyBlock(candidate.above())
                     || level.getBlockState(candidate.below()).getCollisionShape(level, candidate.below()).isEmpty()) {
                 continue;
             }
 
-            Vec3 eyePosition = new Vec3(
-                    candidate.getX() + 0.5,
-                    candidate.getY() + this.skeleton.getEyeHeight(),
+            Vec3 eyePosition = new Vec3(candidate.getX() + 0.5, candidate.getY() + this.skeleton.getEyeHeight(),
                     candidate.getZ() + 0.5);
-            BlockHitResult sight = level.clip(new ClipContext(
-                    eyePosition,
-                    target.getEyePosition(),
-                    ClipContext.Block.COLLIDER,
-                    ClipContext.Fluid.NONE,
-                    this.skeleton));
+            BlockHitResult sight = level.clip(new ClipContext(eyePosition, target.getEyePosition(),
+                    ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this.skeleton));
             if (sight.getType() != HitResult.Type.BLOCK) {
                 continue;
             }
@@ -127,17 +113,11 @@ public final class SkeletonCoverGoal extends Goal {
 
     private void moveIntoCover() {
         if (this.coverPosition != null) {
-            boolean pathFound = this.skeleton.getNavigation().moveTo(
-                    this.coverPosition.getX() + 0.5,
-                    this.coverPosition.getY(),
-                    this.coverPosition.getZ() + 0.5,
-                    1.0);
+            boolean pathFound = this.skeleton.getNavigation().moveTo(this.coverPosition.getX() + 0.5,
+                    this.coverPosition.getY(), this.coverPosition.getZ() + 0.5, 1.0);
             if (!pathFound) {
-                this.skeleton.getMoveControl().setWantedPosition(
-                        this.coverPosition.getX() + 0.5,
-                        this.coverPosition.getY(),
-                        this.coverPosition.getZ() + 0.5,
-                        1.0);
+                this.skeleton.getMoveControl().setWantedPosition(this.coverPosition.getX() + 0.5,
+                        this.coverPosition.getY(), this.coverPosition.getZ() + 0.5, 1.0);
             }
         }
     }

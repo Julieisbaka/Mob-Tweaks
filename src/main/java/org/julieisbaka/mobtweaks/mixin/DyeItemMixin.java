@@ -21,8 +21,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(DyeItem.class)
 abstract class DyeItemMixin {
     @Inject(method = "interactLivingEntity", at = @At("HEAD"), cancellable = true)
-    private void mobTweaks$dyeShulker(ItemStack stack, Player player, LivingEntity target,
-                                      InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+    private void mobTweaks$dyeShulker(ItemStack stack, Player player, LivingEntity target, InteractionHand hand,
+            CallbackInfoReturnable<InteractionResult> cir) {
         DyeColor color = stack.get(DataComponents.DYE);
         if (target instanceof Shulker shulker && shulker.isAlive() && !stack.isEmpty() && color != null
                 && MobTweaksSettings.isEnabled(shulker.level(), MobTweak.DYEABLE_SHULKERS)) {

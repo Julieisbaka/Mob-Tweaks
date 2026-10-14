@@ -32,9 +32,7 @@ public class VexRecallGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        return this.owner != null
-                && this.owner.isAlive()
-                && this.vex.isAlive()
+        return this.owner != null && this.owner.isAlive() && this.vex.isAlive()
                 && MobTweaksSettings.isEnabled(this.vex.level(), MobTweak.VEX_RECALL)
                 && this.vex.distanceToSqr(this.owner) > ARRIVAL_DISTANCE_SQUARED;
     }
@@ -63,8 +61,7 @@ public class VexRecallGoal extends Goal {
     }
 
     private void moveTowardOwner() {
-        this.vex.getMoveControl().setWantedPosition(
-                this.owner.getX(), this.owner.getY(), this.owner.getZ(), 1.0);
+        this.vex.getMoveControl().setWantedPosition(this.owner.getX(), this.owner.getY(), this.owner.getZ(), 1.0);
         this.vex.getLookControl().setLookAt(this.owner, 30.0F, 30.0F);
     }
 }

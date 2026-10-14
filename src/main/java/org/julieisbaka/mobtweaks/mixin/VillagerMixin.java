@@ -32,8 +32,8 @@ abstract class VillagerMixin extends AbstractVillager {
 
     @Inject(method = "customServerAiStep", at = @At("HEAD"))
     private void mobTweaks$healFromFood(ServerLevel level, CallbackInfo ci) {
-        if (!MobTweaksSettings.isEnabled(level, MobTweak.VILLAGER_FOOD_HEALING)
-                || !this.isAlive() || this.isNoAi() || this.isSleeping() || this.getHealth() >= this.getMaxHealth()) {
+        if (!MobTweaksSettings.isEnabled(level, MobTweak.VILLAGER_FOOD_HEALING) || !this.isAlive() || this.isNoAi()
+                || this.isSleeping() || this.getHealth() >= this.getMaxHealth()) {
             this.mobTweaks$healingTicks = 0;
             return;
         }

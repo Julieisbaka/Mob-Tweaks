@@ -85,22 +85,26 @@ public class CubeAndExplosionGameTests {
         BlockPos origin = helper.absolutePos(new BlockPos(2, 2, 2));
         for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-1, -1, -1), origin.offset(2, 2, 2))) {
             boolean inside = pos.getX() >= origin.getX() && pos.getX() < origin.getX() + 2
-                    && pos.getY() >= origin.getY() && pos.getY() < origin.getY() + 2
-                    && pos.getZ() >= origin.getZ() && pos.getZ() < origin.getZ() + 2;
-            helper.getLevel().setBlockAndUpdate(pos, inside ? Blocks.AIR.defaultBlockState() : Blocks.STONE.defaultBlockState());
+                    && pos.getY() >= origin.getY() && pos.getY() < origin.getY() + 2 && pos.getZ() >= origin.getZ()
+                    && pos.getZ() < origin.getZ() + 2;
+            helper.getLevel().setBlockAndUpdate(pos,
+                    inside ? Blocks.AIR.defaultBlockState() : Blocks.STONE.defaultBlockState());
         }
         for (EntityType<? extends AbstractCubeMob> type : types()) {
-            AABB spawnBox = CubeSpawnClearance.getSpawnBox(
-                    type, helper.getLevel(), origin.getX() + 0.5, origin.getY(), origin.getZ() + 0.5);
+            AABB spawnBox = CubeSpawnClearance.getSpawnBox(type, helper.getLevel(), origin.getX() + 0.5, origin.getY(),
+                    origin.getZ() + 0.5);
             helper.assertTrue(spawnBox.getXsize() == 2 && spawnBox.getYsize() == 2 && spawnBox.getZsize() == 2,
                     "Spawn footprint must be exactly 2x2x2");
-            helper.assertTrue(helper.getLevel().noCollision(spawnBox), "Actual two-block room must pass spawn clearance");
+            helper.assertTrue(helper.getLevel().noCollision(spawnBox),
+                    "Actual two-block room must pass spawn clearance");
             boolean reducedLarge = false;
             for (int i = 0; i < 30; i++) {
                 AbstractCubeMob cube = createMob(helper, type);
                 cube.setPos(origin.getX() + 0.5, origin.getY(), origin.getZ() + 0.5);
-                cube.finalizeSpawn(helper.getLevel(), helper.getLevel().getCurrentDifficultyAt(origin), EntitySpawnReason.NATURAL, null);
-                helper.assertTrue(helper.getLevel().noCollision(cube, cube.getBoundingBox()), "Spawned cube must actually fit in room");
+                cube.finalizeSpawn(helper.getLevel(), helper.getLevel().getCurrentDifficultyAt(origin),
+                        EntitySpawnReason.NATURAL, null);
+                helper.assertTrue(helper.getLevel().noCollision(cube, cube.getBoundingBox()),
+                        "Spawned cube must actually fit in room");
                 helper.assertTrue(cube.getSize() <= 2, "Large cubes must choose a size that fits");
                 reducedLarge |= cube.getSize() == 2;
             }
@@ -151,13 +155,13 @@ public class CubeAndExplosionGameTests {
                 try {
                     ((WitherBossAccessor) wither).mobTweaks$serverAiStep(helper.getLevel());
                     float expected = switch (difficulty) {
-                        case EASY -> 37;
-                        case HARD -> 108;
-                        default -> 72;
+                    case EASY -> 37;
+                    case HARD -> 108;
+                    default -> 72;
                     };
                     helper.assertTrue(Math.abs((200 - player.getHealth()) - expected) < 0.001,
-                            "Birth explosion must deal exactly " + expected + " HP on " + difficulty
-                                    + ", got " + (200 - player.getHealth()));
+                            "Birth explosion must deal exactly " + expected + " HP on " + difficulty + ", got "
+                                    + (200 - player.getHealth()));
                 } finally {
                     player.discard();
                     channel.finishAndReleaseAll();

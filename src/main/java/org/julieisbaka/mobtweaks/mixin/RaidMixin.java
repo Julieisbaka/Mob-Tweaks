@@ -23,8 +23,7 @@ abstract class RaidMixin {
     @Shadow
     public abstract void joinRaid(ServerLevel level, int groupNumber, Raider raider, BlockPos pos, boolean exists);
 
-    @Inject(method = "spawnGroup", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/world/entity/raid/Raid;updateBossbar()V"))
+    @Inject(method = "spawnGroup", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/raid/Raid;updateBossbar()V"))
     private void mobTweaks$spawnIllusioner(ServerLevel level, BlockPos pos, CallbackInfo ci) {
         // Vanilla has incremented the wave number but has not updated the boss bar yet.
         if (this.groupsSpawned < 5 || !MobTweaksSettings.isEnabled(level, MobTweak.RAID_ILLUSIONERS)) {
