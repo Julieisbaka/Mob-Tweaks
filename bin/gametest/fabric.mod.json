@@ -11,7 +11,8 @@
       "org.julieisbaka.mobtweaks.test.JockeyAndHealthGameTests",
       "org.julieisbaka.mobtweaks.test.CubeAndExplosionGameTests",
       "org.julieisbaka.mobtweaks.test.RavagerGameTests",
-      "org.julieisbaka.mobtweaks.test.FoxBerryGameTests"
+      "org.julieisbaka.mobtweaks.test.FoxBerryGameTests",
+      "org.julieisbaka.mobtweaks.test.VexAndGolemGameTests"
     ]
   },
   "mixins": ["mob_tweaks_test.mixins.json"],

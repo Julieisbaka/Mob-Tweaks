@@ -23,3 +23,5 @@ A Fabric mod for Minecraft Java Edition **26.3**, by **JulieISBaka**.
   spaces, choosing a smaller size when needed.
 - **Ravagers:** Crush turtle eggs when charging through them.
 - **Foxes:** Bring sweet berries to nearby kits.
+- **Vexes:** Return to their evoker when they lose their target or wander too far away.
+- **Iron golems:** Move between villagers and hostile projectiles to intercept them.

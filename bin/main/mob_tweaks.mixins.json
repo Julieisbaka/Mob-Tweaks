@@ -12,7 +12,9 @@
     "CubeMobMixin",
     "CubeSpawnMixin",
     "RavagerMixin",
-    "FoxMixin"
+    "FoxMixin",
+    "VexMixin",
+    "IronGolemMixin"
   ],
   "injectors": {
     "defaultRequire": 1
