@@ -5,7 +5,12 @@ import static org.julieisbaka.mobtweaks.test.AdditionalMobGameTests.createMob;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
+import io.netty.channel.embedded.EmbeddedChannel;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.CommonListenerCookie;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EntityTypes;
@@ -65,20 +70,28 @@ public class MobTweakSettingsAndBehaviorGameTests {
         helper.getLevel().addFreshEntity(horse);
 
         ServerPlayer rider = (ServerPlayer) helper.makeMockServerPlayer(GameType.SURVIVAL);
-        helper.assertTrue(rider.startRiding(horse, true, true), "Test rider should mount horse");
-        Vec3 forward = horse.getLookAngle().multiply(1.0, 0.0, 1.0).normalize();
-        Monster attacker = createMob(helper, EntityTypes.ZOMBIE);
-        attacker.setPos(
-                horse.getX() - forward.x * 4.0,
-                horse.getY(),
-                horse.getZ() - forward.z * 4.0);
-        helper.getLevel().addFreshEntity(attacker);
+        EmbeddedChannel channel = connectPlayer(helper, rider);
+        try {
+            helper.assertTrue(rider.startRiding(horse, true, true), "Test rider should mount horse");
+            Vec3 forward = horse.getLookAngle().multiply(1.0, 0.0, 1.0).normalize();
+            Monster attacker = createMob(helper, EntityTypes.ZOMBIE);
+            attacker.setPos(
+                    horse.getX() - forward.x * 4.0,
+                    horse.getY(),
+                    horse.getZ() - forward.z * 4.0);
+            helper.getLevel().addFreshEntity(attacker);
 
-        horse.aiStep();
-        helper.assertTrue(horse.isStanding(), "Horse should rear when a hostile approaches from behind");
-        helper.assertTrue(rider.getVehicle() == horse, "Warning rear must not buck the rider off");
-        attacker.discard();
-        horse.discard();
+            horse.clearStanding();
+            horse.aiStep();
+            helper.assertTrue(horse.isStanding(), "Horse should rear when a hostile approaches from behind");
+            helper.assertTrue(rider.getVehicle() == horse, "Warning rear must not buck the rider off");
+            attacker.discard();
+        } finally {
+            rider.stopRiding();
+            rider.discard();
+            horse.discard();
+            channel.finishAndReleaseAll();
+        }
         helper.succeed();
     }
 
@@ -92,19 +105,26 @@ public class MobTweakSettingsAndBehaviorGameTests {
             horse.setItemSlot(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
             helper.getLevel().addFreshEntity(horse);
             ServerPlayer rider = (ServerPlayer) helper.makeMockServerPlayer(GameType.SURVIVAL);
-            rider.startRiding(horse, true, true);
-            Vec3 forward = horse.getLookAngle().multiply(1.0, 0.0, 1.0).normalize();
-            Monster attacker = createMob(helper, EntityTypes.ZOMBIE);
-            attacker.setPos(
-                    horse.getX() - forward.x * 4.0,
-                    horse.getY(),
-                    horse.getZ() - forward.z * 4.0);
-            helper.getLevel().addFreshEntity(attacker);
+            EmbeddedChannel channel = connectPlayer(helper, rider);
+            try {
+                rider.startRiding(horse, true, true);
+                Vec3 forward = horse.getLookAngle().multiply(1.0, 0.0, 1.0).normalize();
+                Monster attacker = createMob(helper, EntityTypes.ZOMBIE);
+                attacker.setPos(
+                        horse.getX() - forward.x * 4.0,
+                        horse.getY(),
+                        horse.getZ() - forward.z * 4.0);
+                helper.getLevel().addFreshEntity(attacker);
 
-            horse.aiStep();
-            helper.assertTrue(!horse.isStanding(), "Disabled warning must not make the horse rear");
-            attacker.discard();
-            horse.discard();
+                horse.aiStep();
+                helper.assertTrue(!horse.isStanding(), "Disabled warning must not make the horse rear");
+                attacker.discard();
+            } finally {
+                rider.stopRiding();
+                rider.discard();
+                horse.discard();
+                channel.finishAndReleaseAll();
+            }
         } finally {
             helper.getLevel().getGameRules().set(rule, true, helper.getLevel().getServer());
         }
@@ -172,7 +192,7 @@ public class MobTweakSettingsAndBehaviorGameTests {
         enderman.setTarget(attacker);
         helper.getLevel().addFreshEntity(enderman);
         helper.getLevel().addFreshEntity(attacker);
-        BlockPos expectedBlock = BlockPos.containing(enderman.position().add(1.25, 0, 0));
+        BlockPos expectedBlock = BlockPos.containing(enderman.getX() + 1.25, enderman.getY(), enderman.getZ());
 
         ((EndermanAccessor) enderman).mobTweaks$serverAiStep(helper.getLevel());
         helper.assertTrue(helper.getLevel().getBlockState(expectedBlock).is(Blocks.STONE),
@@ -196,7 +216,7 @@ public class MobTweakSettingsAndBehaviorGameTests {
             enderman.setTarget(attacker);
             helper.getLevel().addFreshEntity(enderman);
             helper.getLevel().addFreshEntity(attacker);
-            BlockPos expectedBlock = BlockPos.containing(enderman.position().add(1.25, 0, 0));
+            BlockPos expectedBlock = BlockPos.containing(enderman.getX() + 1.25, enderman.getY(), enderman.getZ());
 
             ((EndermanAccessor) enderman).mobTweaks$serverAiStep(helper.getLevel());
             helper.assertTrue(helper.getLevel().getBlockState(expectedBlock).isAir(),
@@ -208,5 +228,20 @@ public class MobTweakSettingsAndBehaviorGameTests {
             helper.getLevel().getGameRules().set(GameRules.MOB_GRIEFING, original, helper.getLevel().getServer());
         }
         helper.succeed();
+    }
+
+    private static EmbeddedChannel connectPlayer(GameTestHelper helper, ServerPlayer player) {
+        Connection connection = new Connection(PacketFlow.SERVERBOUND);
+        EmbeddedChannel channel = new EmbeddedChannel(connection);
+        new ServerGamePacketListenerImpl(
+                helper.getLevel().getServer(),
+                connection,
+                player,
+                CommonListenerCookie.createInitial(player.getGameProfile(), false));
+        for (int i = 0; i < 60; i++) {
+            player.connection.tickClientLoadTimeout();
+        }
+        helper.getLevel().addNewPlayer(player);
+        return channel;
     }
 }

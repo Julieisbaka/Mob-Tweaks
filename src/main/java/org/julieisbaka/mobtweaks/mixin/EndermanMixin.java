@@ -50,9 +50,12 @@ abstract class EndermanMixin {
         if (carried == null || carried.isAir()) {
             return;
         }
-        Vec3 direction = attacker.getBoundingBox().getCenter()
-                .subtract(enderman.getBoundingBox().getCenter()).normalize();
-        BlockPos position = BlockPos.containing(enderman.position().add(direction.scale(1.25)));
+        Vec3 towardAttacker = attacker.position().subtract(enderman.position())
+                .multiply(1.0, 0.0, 1.0).normalize();
+        BlockPos position = BlockPos.containing(
+                enderman.getX() + towardAttacker.x * 1.25,
+                enderman.getY(),
+                enderman.getZ() + towardAttacker.z * 1.25);
         BlockState existing = level.getBlockState(position);
         AABB placementBounds = new AABB(
                 position.getX(), position.getY(), position.getZ(),

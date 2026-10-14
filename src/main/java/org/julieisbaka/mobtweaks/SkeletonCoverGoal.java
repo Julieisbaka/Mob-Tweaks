@@ -8,9 +8,6 @@ import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.pathfinder.Path;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -90,6 +87,9 @@ public final class SkeletonCoverGoal extends Goal {
         if (target == null || !target.isAlive()) {
             return null;
         }
+        if (!this.skeleton.hasLineOfSight(target)) {
+            return this.skeleton.blockPosition();
+        }
 
         BlockPos origin = this.skeleton.blockPosition();
         BlockPos bestPosition = null;
@@ -114,17 +114,6 @@ public final class SkeletonCoverGoal extends Goal {
                     ClipContext.Fluid.NONE,
                     this.skeleton));
             if (sight.getType() != HitResult.Type.BLOCK) {
-                continue;
-            }
-
-            AABB destination = new AABB(
-                    candidate.getX(), candidate.getY(), candidate.getZ(),
-                    candidate.getX() + 1.0, candidate.getY() + this.skeleton.getBbHeight(), candidate.getZ() + 1.0);
-            if (!level.noCollision(this.skeleton, destination)) {
-                continue;
-            }
-            Path path = this.skeleton.getNavigation().createPath(candidate, 0);
-            if (path == null || !path.canReach()) {
                 continue;
             }
 
