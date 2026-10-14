@@ -31,6 +31,7 @@ import org.julieisbaka.mobtweaks.MobTweak;
 import org.julieisbaka.mobtweaks.MobTweaksConfig;
 import org.julieisbaka.mobtweaks.MobTweaksGameRules;
 import org.julieisbaka.mobtweaks.MobTweaksSettings;
+import org.julieisbaka.mobtweaks.CubeSpawnClearance;
 import org.julieisbaka.mobtweaks.SkeletonCoverGoal;
 import org.julieisbaka.mobtweaks.test.mixin.EndermanAccessor;
 
@@ -56,6 +57,20 @@ public class MobTweakSettingsAndBehaviorGameTests {
             helper.assertTrue(
                     MobTweaksSettings.isEnabled(helper.getLevel(), MobTweak.RAVAGER_TURTLE_EGGS),
                     "Other tweaks must remain enabled");
+        } finally {
+            helper.getLevel().getGameRules().set(rule, true, helper.getLevel().getServer());
+        }
+        helper.succeed();
+    }
+
+    @GameTest
+    public void smallCubeSpawnRuleCanBeDisabled(GameTestHelper helper) {
+        GameRule<Boolean> rule = MobTweaksGameRules.get(MobTweak.CUBES_SMALL_SPAWNING);
+        try {
+            helper.getLevel().getGameRules().set(rule, false, helper.getLevel().getServer());
+            var spawnBox = CubeSpawnClearance.getSpawnBox(
+                    EntityTypes.SLIME, helper.getLevel(), 4.5, 3.0, 4.5);
+            helper.assertTrue(spawnBox.getXsize() > 2.0, "Disabled rule must restore normal slime clearance");
         } finally {
             helper.getLevel().getGameRules().set(rule, true, helper.getLevel().getServer());
         }
@@ -131,7 +146,7 @@ public class MobTweakSettingsAndBehaviorGameTests {
         helper.succeed();
     }
 
-    @GameTest
+    @GameTest(padding = 16)
     public void bowSkeletonMovesBehindCoverAfterShooting(GameTestHelper helper) {
         Skeleton skeleton = createMob(helper, EntityTypes.SKELETON);
         Villager target = createMob(helper, EntityTypes.VILLAGER);
@@ -140,14 +155,43 @@ public class MobTweakSettingsAndBehaviorGameTests {
         skeleton.setTarget(target);
         helper.getLevel().addFreshEntity(skeleton);
         helper.getLevel().addFreshEntity(target);
-        BlockPos wall = BlockPos.containing(skeleton.getX() + 2.0, skeleton.getY(), skeleton.getZ());
+        int floorY = BlockPos.containing(skeleton.getX(), skeleton.getY(), skeleton.getZ()).getY() - 1;
+        for (int x = BlockPos.containing(skeleton.getX(), skeleton.getY(), skeleton.getZ()).getX() - 4;
+             x <= BlockPos.containing(skeleton.getX(), skeleton.getY(), skeleton.getZ()).getX() + 6; x++) {
+            for (int z = BlockPos.containing(skeleton.getX(), skeleton.getY(), skeleton.getZ()).getZ() - 4;
+                 z <= BlockPos.containing(skeleton.getX(), skeleton.getY(), skeleton.getZ()).getZ() + 6; z++) {
+                helper.getLevel().setBlockAndUpdate(new BlockPos(x, floorY, z), Blocks.STONE.defaultBlockState());
+            }
+        }
+        int eyeY = net.minecraft.util.Mth.floor(skeleton.getEyeY());
+        for (int x = net.minecraft.util.Mth.floor(skeleton.getX()); x <= net.minecraft.util.Mth.floor(target.getX()); x++) {
+            for (int y = eyeY - 1; y <= eyeY + 1; y++) {
+                helper.getLevel().setBlockAndUpdate(
+                        new BlockPos(x, y, net.minecraft.util.Mth.floor(skeleton.getZ())),
+                        Blocks.AIR.defaultBlockState());
+            }
+        }
+        BlockPos wall = BlockPos.containing(skeleton.getX() + 3.0, skeleton.getY(), skeleton.getZ() + 3.0);
         helper.getLevel().setBlockAndUpdate(wall, Blocks.STONE.defaultBlockState());
         helper.getLevel().setBlockAndUpdate(wall.above(), Blocks.STONE.defaultBlockState());
+        helper.assertTrue(skeleton.hasLineOfSight(target), "Test wall should leave the skeleton's current path exposed");
 
-        SkeletonCoverGoal goal = new SkeletonCoverGoal(skeleton);
-        goal.beginReload();
-        helper.assertTrue(goal.canUse(), "Skeleton should find cover behind blocks during bow reload");
+        SkeletonCoverGoal goal = skeleton.getGoalSelector().getAvailableGoals().stream()
+                .map(wrappedGoal -> wrappedGoal.getGoal())
+                .filter(SkeletonCoverGoal.class::isInstance)
+                .map(SkeletonCoverGoal.class::cast)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Skeleton cover goal was not registered"));
+        skeleton.performRangedAttack(target, 1.0F);
+        helper.assertTrue(goal.canUse(), "Skeleton should find nearby cover after firing its bow");
         goal.start();
+        BlockPos pathTarget = skeleton.getNavigation().getTargetPos();
+        boolean navigationStarted = pathTarget != null && !pathTarget.equals(skeleton.blockPosition());
+        boolean steeringStarted = skeleton.getMoveControl().hasWanted()
+                && (skeleton.getMoveControl().getWantedX() != skeleton.getX()
+                || skeleton.getMoveControl().getWantedZ() != skeleton.getZ());
+        helper.assertTrue(navigationStarted || steeringStarted,
+                "Skeleton should move toward the block that hides it from its target");
         goal.tick();
         goal.stop();
         skeleton.discard();
@@ -155,7 +199,7 @@ public class MobTweakSettingsAndBehaviorGameTests {
         helper.succeed();
     }
 
-    @GameTest
+    @GameTest(padding = 16)
     public void skeletonCoverCanBeDisabled(GameTestHelper helper) {
         GameRule<Boolean> rule = MobTweaksGameRules.get(MobTweak.SKELETON_COVER);
         try {

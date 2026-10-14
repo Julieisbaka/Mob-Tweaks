@@ -11,6 +11,10 @@ import net.minecraft.world.entity.monster.illager.Evoker;
 import net.minecraft.world.entity.monster.skeleton.Skeleton;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.julieisbaka.mobtweaks.IronGolemProjectileGuardGoal;
 import org.julieisbaka.mobtweaks.VexRecallGoal;
 
@@ -96,6 +100,14 @@ public class VexAndGolemGameTests {
         helper.assertTrue(
                 golem.getMoveControl().getWantedX() > villager.getX(),
                 "Golem should move toward the incoming arrow's side of the villager");
+        Vec3 start = arrow.position();
+        Vec3 end = start.add(arrow.getDeltaMovement().scale(8.0));
+        AABB searchArea = arrow.getBoundingBox().expandTowards(end.subtract(start)).inflate(1.0);
+        EntityHitResult actualHit = ProjectileUtil.getEntityHitResult(
+                helper.getLevel(), arrow, start, end, searchArea,
+                candidate -> candidate.isPickable() && candidate != skeleton);
+        helper.assertTrue(actualHit != null && actualHit.getEntity() == villager,
+                "A golem away from the shot's actual path must not guarantee interception");
         goal.stop();
         golem.discard();
         villager.discard();

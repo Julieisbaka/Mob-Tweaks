@@ -29,4 +29,5 @@ A Fabric mod for Minecraft Java Edition **26.3**, by **JulieISBaka**.
 - **Skeletons, strays, and bogged:** Seek cover while reloading their bows.
 - **Endermen:** At half health, place a carried block between themselves and an attacker.
 
-Each change can be disabled individually in the world or in `config/mob-tweaks.properties`.
+Each tweak is enabled by default. Set its `/gamerule mob_tweaks:<key>` or matching
+entry in `config/mob-tweaks.properties` to `false` to disable it.

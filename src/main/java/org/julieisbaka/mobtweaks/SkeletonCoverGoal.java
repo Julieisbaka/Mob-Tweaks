@@ -116,7 +116,6 @@ public final class SkeletonCoverGoal extends Goal {
             if (sight.getType() != HitResult.Type.BLOCK) {
                 continue;
             }
-
             double distance = this.skeleton.distanceToSqr(Vec3.atBottomCenterOf(candidate));
             if (distance < bestDistance) {
                 bestDistance = distance;
@@ -128,11 +127,18 @@ public final class SkeletonCoverGoal extends Goal {
 
     private void moveIntoCover() {
         if (this.coverPosition != null) {
-            this.skeleton.getNavigation().moveTo(
+            boolean pathFound = this.skeleton.getNavigation().moveTo(
                     this.coverPosition.getX() + 0.5,
                     this.coverPosition.getY(),
                     this.coverPosition.getZ() + 0.5,
                     1.0);
+            if (!pathFound) {
+                this.skeleton.getMoveControl().setWantedPosition(
+                        this.coverPosition.getX() + 0.5,
+                        this.coverPosition.getY(),
+                        this.coverPosition.getZ() + 0.5,
+                        1.0);
+            }
         }
     }
 }
