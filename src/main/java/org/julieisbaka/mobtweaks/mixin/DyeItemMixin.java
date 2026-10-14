@@ -11,6 +11,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
+import org.julieisbaka.mobtweaks.MobTweak;
+import org.julieisbaka.mobtweaks.MobTweaksSettings;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,7 +24,8 @@ abstract class DyeItemMixin {
     private void mobTweaks$dyeShulker(ItemStack stack, Player player, LivingEntity target,
                                       InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
         DyeColor color = stack.get(DataComponents.DYE);
-        if (target instanceof Shulker shulker && shulker.isAlive() && !stack.isEmpty() && color != null) {
+        if (target instanceof Shulker shulker && shulker.isAlive() && !stack.isEmpty() && color != null
+                && MobTweaksSettings.isEnabled(shulker.level(), MobTweak.DYEABLE_SHULKERS)) {
             if (shulker.getColor() != color && !shulker.level().isClientSide()) {
                 shulker.setComponent(DataComponents.SHULKER_COLOR, color);
                 shulker.level().playSound(null, shulker, SoundEvents.DYE_USE, SoundSource.PLAYERS, 1.0F, 1.0F);

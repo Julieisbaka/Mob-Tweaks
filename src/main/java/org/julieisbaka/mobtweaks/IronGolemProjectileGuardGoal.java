@@ -27,7 +27,9 @@ public class IronGolemProjectileGuardGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        if (!(this.golem.level() instanceof ServerLevel level) || !this.golem.isAlive() || this.golem.isNoAi()) {
+        if (!(this.golem.level() instanceof ServerLevel level)
+                || !MobTweaksSettings.isEnabled(level, MobTweak.IRON_GOLEM_PROJECTILE_GUARD)
+                || !this.golem.isAlive() || this.golem.isNoAi()) {
             return false;
         }
 
@@ -73,6 +75,7 @@ public class IronGolemProjectileGuardGoal extends Goal {
     @Override
     public boolean canContinueToUse() {
         return this.golem.isAlive()
+                && MobTweaksSettings.isEnabled(this.golem.level(), MobTweak.IRON_GOLEM_PROJECTILE_GUARD)
                 && this.villager != null
                 && this.villager.isAlive()
                 && this.golem.tickCount < this.guardUntil;

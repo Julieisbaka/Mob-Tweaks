@@ -38,7 +38,8 @@ public class FoxBerryDeliveryGoal extends Goal {
                 || this.fox.getTarget() != null
                 || this.fox.isAggressive()
                 || this.fox.isSleeping()
-                || this.fox.isSitting()) {
+                || this.fox.isSitting()
+                || !MobTweaksSettings.isEnabled(level, MobTweak.FOX_BERRY_DELIVERY)) {
             return false;
         }
 
@@ -80,6 +81,7 @@ public class FoxBerryDeliveryGoal extends Goal {
                 && this.baby.isBaby()
                 && this.baby.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty()
                 && this.fox.getTarget() == null
+                && MobTweaksSettings.isEnabled(this.fox.level(), MobTweak.FOX_BERRY_DELIVERY)
                 && !this.fox.isAggressive()
                 && !this.fox.isSleeping();
     }
@@ -103,6 +105,7 @@ public class FoxBerryDeliveryGoal extends Goal {
         ItemStack heldItem = this.fox.getItemBySlot(EquipmentSlot.MAINHAND);
         if (!heldItem.is(Items.SWEET_BERRIES)) {
             if (!(this.fox.level() instanceof ServerLevel level)
+                    || !MobTweaksSettings.isEnabled(level, MobTweak.FOX_BERRY_DELIVERY)
                     || !level.getGameRules().get(GameRules.MOB_GRIEFING)) {
                 this.delivered = true;
                 return;

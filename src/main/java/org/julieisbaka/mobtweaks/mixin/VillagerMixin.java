@@ -11,6 +11,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import org.julieisbaka.mobtweaks.MobTweak;
+import org.julieisbaka.mobtweaks.MobTweaksSettings;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -30,7 +32,8 @@ abstract class VillagerMixin extends AbstractVillager {
 
     @Inject(method = "customServerAiStep", at = @At("HEAD"))
     private void mobTweaks$healFromFood(ServerLevel level, CallbackInfo ci) {
-        if (!this.isAlive() || this.isNoAi() || this.isSleeping() || this.getHealth() >= this.getMaxHealth()) {
+        if (!MobTweaksSettings.isEnabled(level, MobTweak.VILLAGER_FOOD_HEALING)
+                || !this.isAlive() || this.isNoAi() || this.isSleeping() || this.getHealth() >= this.getMaxHealth()) {
             this.mobTweaks$healingTicks = 0;
             return;
         }

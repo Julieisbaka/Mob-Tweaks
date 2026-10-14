@@ -6,6 +6,9 @@
   "description": "Raid illusioners, villager flowers and healing, dyeable shulkers, stronger withers, baby zombie jockeys, berry-giving foxes, and protective golems.",
   "authors": ["JulieISBaka"],
   "environment": "*",
+  "entrypoints": {
+    "main": ["org.julieisbaka.mobtweaks.MobTweaks"]
+  },
   "mixins": ["mob_tweaks.mixins.json"],
   "depends": {
     "fabricloader": ">=0.19.5",

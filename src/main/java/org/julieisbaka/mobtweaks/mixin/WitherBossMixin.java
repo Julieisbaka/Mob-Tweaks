@@ -16,6 +16,8 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.julieisbaka.mobtweaks.WitherDashGoal;
 import org.julieisbaka.mobtweaks.WitherBirthExplosionCalculator;
+import org.julieisbaka.mobtweaks.MobTweak;
+import org.julieisbaka.mobtweaks.MobTweaksSettings;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -39,6 +41,9 @@ abstract class WitherBossMixin extends Monster {
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void mobTweaks$setSpawnHealth(EntityType<? extends WitherBoss> type, Level level, CallbackInfo ci) {
+        if (!MobTweaksSettings.isEnabled(level, MobTweak.WITHER_DIFFICULTY_HEALTH)) {
+            return;
+        }
         double health = switch (level.getDifficulty()) {
             case NORMAL -> 450.0;
             case HARD -> 600.0;
@@ -51,6 +56,9 @@ abstract class WitherBossMixin extends Monster {
     @ModifyArg(method = "customServerAiStep", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/entity/boss/wither/WitherBoss;heal(F)V", ordinal = 0), index = 0)
     private float mobTweaks$scaleSpawnChargeHealing(float amount) {
+        if (!MobTweaksSettings.isEnabled(this.level(), MobTweak.WITHER_DIFFICULTY_HEALTH)) {
+            return amount;
+        }
         return amount * this.getMaxHealth() / 300.0F;
     }
 
@@ -58,6 +66,10 @@ abstract class WitherBossMixin extends Monster {
             target = "Lnet/minecraft/server/level/ServerLevel;explode(Lnet/minecraft/world/entity/Entity;DDDFZLnet/minecraft/world/level/Level$ExplosionInteraction;)V"))
     private void mobTweaks$birthExplosionDamage(ServerLevel level, Entity source, double x, double y, double z,
                                                 float radius, boolean fire, Level.ExplosionInteraction interaction) {
+        if (!MobTweaksSettings.isEnabled(level, MobTweak.WITHER_BIRTH_EXPLOSION)) {
+            level.explode(source, x, y, z, radius, fire, interaction);
+            return;
+        }
         level.explode(source, null, new WitherBirthExplosionCalculator(source),
                 new Vec3(x, y, z), radius, fire, interaction);
     }
@@ -98,7 +110,8 @@ abstract class WitherBossMixin extends Monster {
     @Unique
     private void mobTweaks$enterHalfHealthPhase(ServerLevel level) {
         WitherBoss wither = (WitherBoss) (Object) this;
-        if (this.mobTweaks$reinforcementsSpawned || !this.isAlive()
+        if (!MobTweaksSettings.isEnabled(level, MobTweak.WITHER_HALF_HEALTH_REINFORCEMENTS)
+                || this.mobTweaks$reinforcementsSpawned || !this.isAlive()
                 || wither.getInvulnerableTicks() > 0 || !wither.isPowered()) {
             return;
         }

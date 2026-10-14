@@ -32,7 +32,8 @@ public final class WitherDashGoal extends Goal {
     }
 
     public void recordShot() {
-        if (!this.active && this.wither.isPowered() && this.wither.getInvulnerableTicks() == 0) {
+        if (!this.active && this.wither.isPowered() && this.wither.getInvulnerableTicks() == 0
+                && MobTweaksSettings.isEnabled(this.wither.level(), MobTweak.WITHER_DASH)) {
             this.shots = Math.min(4, this.shots + 1);
         }
     }
@@ -43,7 +44,8 @@ public final class WitherDashGoal extends Goal {
             this.shots = 0;
         }
         LivingEntity target = this.wither.getTarget();
-        return this.shots >= 4 && this.wither.isAlive() && this.wither.isPowered()
+        return MobTweaksSettings.isEnabled(this.wither.level(), MobTweak.WITHER_DASH)
+                && this.shots >= 4 && this.wither.isAlive() && this.wither.isPowered()
                 && this.wither.getInvulnerableTicks() == 0 && target != null
                 && target.isAlive() && this.wither.canAttack(target);
     }
@@ -62,7 +64,8 @@ public final class WitherDashGoal extends Goal {
     @Override
     public boolean canContinueToUse() {
         LivingEntity target = this.wither.getTarget();
-        return this.active && this.dashTicks > 0 && this.wither.isAlive() && this.wither.isPowered()
+        return MobTweaksSettings.isEnabled(this.wither.level(), MobTweak.WITHER_DASH)
+                && this.active && this.dashTicks > 0 && this.wither.isAlive() && this.wither.isPowered()
                 && this.wither.getInvulnerableTicks() == 0 && target != null && target.isAlive()
                 && this.wither.canAttack(target);
     }

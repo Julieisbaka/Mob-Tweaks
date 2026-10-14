@@ -6,6 +6,9 @@ import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.server.level.ServerLevel;
+import org.julieisbaka.mobtweaks.MobTweak;
+import org.julieisbaka.mobtweaks.MobTweaksSettings;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,6 +34,8 @@ abstract class OfferFlowerGoalMixin {
                 || !(this.entity instanceof Villager villager)
                 || !villager.isAlive()
                 || !villager.isBaby()
+                || !(this.golem.level() instanceof ServerLevel level)
+                || !MobTweaksSettings.isEnabled(level, MobTweak.BABY_VILLAGER_FLOWERS)
                 || !this.golem.getBoundingBox().inflate(6.0, 2.0, 6.0).intersects(villager.getBoundingBox())) {
             return;
         }

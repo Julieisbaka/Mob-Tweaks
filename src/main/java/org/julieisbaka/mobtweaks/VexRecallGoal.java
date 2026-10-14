@@ -20,7 +20,8 @@ public class VexRecallGoal extends Goal {
     @Override
     public boolean canUse() {
         this.owner = this.vex.getOwner();
-        if (this.owner == null || !this.owner.isAlive() || !this.vex.isAlive()) {
+        if (this.owner == null || !this.owner.isAlive() || !this.vex.isAlive()
+                || !MobTweaksSettings.isEnabled(this.vex.level(), MobTweak.VEX_RECALL)) {
             return false;
         }
 
@@ -34,6 +35,7 @@ public class VexRecallGoal extends Goal {
         return this.owner != null
                 && this.owner.isAlive()
                 && this.vex.isAlive()
+                && MobTweaksSettings.isEnabled(this.vex.level(), MobTweak.VEX_RECALL)
                 && this.vex.distanceToSqr(this.owner) > ARRIVAL_DISTANCE_SQUARED;
     }
 

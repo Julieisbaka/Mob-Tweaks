@@ -12,6 +12,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.phys.AABB;
+import org.julieisbaka.mobtweaks.MobTweak;
+import org.julieisbaka.mobtweaks.MobTweaksSettings;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,6 +38,7 @@ abstract class RavagerMixin extends Raider {
     private void mobTweaks$crushEggs(CallbackInfo ci) {
         if (!(this.level() instanceof ServerLevel level) || !this.isAlive() || this.isNoAi()
                 || this.isImmobile() || this.getTarget() == null
+                || !MobTweaksSettings.isEnabled(level, MobTweak.RAVAGER_TURTLE_EGGS)
                 || !level.getGameRules().get(GameRules.MOB_GRIEFING)) {
             return;
         }

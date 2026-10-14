@@ -7,6 +7,8 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.monster.illager.Illusioner;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.entity.raid.Raider;
+import org.julieisbaka.mobtweaks.MobTweak;
+import org.julieisbaka.mobtweaks.MobTweaksSettings;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,7 +27,7 @@ abstract class RaidMixin {
             target = "Lnet/minecraft/world/entity/raid/Raid;updateBossbar()V"))
     private void mobTweaks$spawnIllusioner(ServerLevel level, BlockPos pos, CallbackInfo ci) {
         // Vanilla has incremented the wave number but has not updated the boss bar yet.
-        if (this.groupsSpawned < 5) {
+        if (this.groupsSpawned < 5 || !MobTweaksSettings.isEnabled(level, MobTweak.RAID_ILLUSIONERS)) {
             return;
         }
 

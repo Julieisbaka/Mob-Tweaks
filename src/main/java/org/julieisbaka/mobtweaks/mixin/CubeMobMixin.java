@@ -15,6 +15,9 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import org.julieisbaka.mobtweaks.MobTweak;
+import org.julieisbaka.mobtweaks.MobTweaksSettings;
+import org.julieisbaka.mobtweaks.SnowGolemTargetGoal;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -37,14 +40,15 @@ abstract class CubeMobMixin extends Mob {
     @Inject(method = "<init>", at = @At("TAIL"))
     private void mobTweaks$targetSnowGolems(EntityType<? extends AbstractCubeMob> type, Level level, CallbackInfo ci) {
         if ((Object) this instanceof Slime || (Object) this instanceof MagmaCube) {
-            this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, SnowGolem.class, true));
+            this.targetSelector.addGoal(3, new SnowGolemTargetGoal(this));
         }
     }
 
     @Inject(method = "push", at = @At("TAIL"))
     private void mobTweaks$damageSnowGolem(Entity entity, CallbackInfo ci) {
         if (((Object) this instanceof Slime || (Object) this instanceof MagmaCube)
-                && entity instanceof SnowGolem snowGolem && this.canDealDamage()) {
+                && entity instanceof SnowGolem snowGolem && this.canDealDamage()
+                && MobTweaksSettings.isEnabled(this.level(), MobTweak.CUBES_ATTACK_SNOW_GOLEMS)) {
             this.dealDamage(snowGolem);
         }
     }
@@ -55,7 +59,8 @@ abstract class CubeMobMixin extends Mob {
                                          CallbackInfoReturnable<SpawnGroupData> cir) {
         if (!((Object) this instanceof Slime || (Object) this instanceof MagmaCube)
                 || reason == EntitySpawnReason.CONVERSION || reason == EntitySpawnReason.LOAD
-                || reason == EntitySpawnReason.DIMENSION_TRAVEL) {
+                || reason == EntitySpawnReason.DIMENSION_TRAVEL
+                || !MobTweaksSettings.isEnabled(level, MobTweak.CUBES_SMALL_SPAWNING)) {
             return;
         }
         AbstractCubeMob cube = (AbstractCubeMob) (Object) this;

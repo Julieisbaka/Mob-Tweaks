@@ -68,7 +68,8 @@ public final class ZombieJockeyGoal extends Goal {
     @Override
     public boolean canUse() {
         if (!this.eligible || !this.zombie.isBaby() || !this.zombie.isAlive()
-                || this.zombie.isNoAi() || this.zombie.isPassenger()) {
+                || this.zombie.isNoAi() || this.zombie.isPassenger()
+                || !MobTweaksSettings.isEnabled(this.zombie.level(), MobTweak.BABY_ZOMBIE_JOCKEYS)) {
             return false;
         }
         if (this.searchTicks > 0) {
@@ -95,6 +96,7 @@ public final class ZombieJockeyGoal extends Goal {
     @Override
     public boolean canContinueToUse() {
         return this.approachTicks > 0 && this.zombie.isAlive() && this.zombie.isBaby()
+                && MobTweaksSettings.isEnabled(this.zombie.level(), MobTweak.BABY_ZOMBIE_JOCKEYS)
                 && !this.zombie.isPassenger() && this.mount != null && this.isEligibleMount(this.mount)
                 && this.zombie.distanceToSqr(this.mount) <= 144.0;
     }
