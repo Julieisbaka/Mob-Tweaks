@@ -22,3 +22,4 @@ A Fabric mod for Minecraft Java Edition **26.3**, by **JulieISBaka**.
 - **Slimes and magma cubes:** Attack snow golems and can spawn in 2x2x2
   spaces, choosing a smaller size when needed.
 - **Ravagers:** Crush turtle eggs when charging through them.
+- **Foxes:** Bring sweet berries to nearby kits.

@@ -10,7 +10,8 @@
       "org.julieisbaka.mobtweaks.test.AdditionalMobGameTests",
       "org.julieisbaka.mobtweaks.test.JockeyAndHealthGameTests",
       "org.julieisbaka.mobtweaks.test.CubeAndExplosionGameTests",
-      "org.julieisbaka.mobtweaks.test.RavagerGameTests"
+      "org.julieisbaka.mobtweaks.test.RavagerGameTests",
+      "org.julieisbaka.mobtweaks.test.FoxBerryGameTests"
     ]
   },
   "mixins": ["mob_tweaks_test.mixins.json"],

@@ -3,7 +3,7 @@
   "id": "mob_tweaks",
   "version": "${version}",
   "name": "Mob Tweaks",
-  "description": "Raid illusioners, villager flowers and healing, dyeable shulkers, stronger withers, baby zombie jockeys, and slime and magma cube tweaks.",
+  "description": "Raid illusioners, villager flowers and healing, dyeable shulkers, stronger withers, baby zombie jockeys, berry-giving foxes, and more.",
   "authors": ["JulieISBaka"],
   "environment": "*",
   "mixins": ["mob_tweaks.mixins.json"],

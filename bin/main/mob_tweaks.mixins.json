@@ -11,7 +11,8 @@
     "ZombieMixin",
     "CubeMobMixin",
     "CubeSpawnMixin",
-    "RavagerMixin"
+    "RavagerMixin",
+    "FoxMixin"
   ],
   "injectors": {
     "defaultRequire": 1
