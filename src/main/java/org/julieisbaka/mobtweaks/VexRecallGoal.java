@@ -57,11 +57,12 @@ public class VexRecallGoal extends Goal {
 
     @Override
     public void stop() {
-        this.vex.getNavigation().stop();
+        this.vex.getMoveControl().setWait();
     }
 
     private void moveTowardOwner() {
-        this.vex.getNavigation().moveTo(this.owner, 1.0);
+        this.vex.getMoveControl().setWantedPosition(
+                this.owner.getX(), this.owner.getY(), this.owner.getZ(), 1.0);
         this.vex.getLookControl().setLookAt(this.owner, 30.0F, 30.0F);
     }
 }

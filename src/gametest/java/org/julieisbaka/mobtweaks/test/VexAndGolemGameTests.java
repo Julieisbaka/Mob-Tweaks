@@ -29,7 +29,10 @@ public class VexAndGolemGameTests {
         goal.start();
         helper.assertTrue(goal.canContinueToUse(), "Vex should continue returning until near its owner");
         goal.tick();
-        helper.assertTrue(vex.getNavigation().isInProgress(), "Returning vex should navigate to its owner");
+        helper.assertTrue(vex.getMoveControl().hasWanted(), "Returning vex should fly toward its owner");
+        helper.assertTrue(
+                vex.getMoveControl().getWantedX() == evoker.getX(),
+                "Returning vex should steer toward its owner's position");
         goal.stop();
         helper.succeed();
     }
@@ -89,9 +92,9 @@ public class VexAndGolemGameTests {
         helper.assertTrue(goal.canUse(), "Golem should detect a hostile arrow aimed at a nearby villager");
         goal.start();
         goal.tick();
-        helper.assertTrue(golem.getNavigation().isInProgress(), "Golem should move to intercept the arrow");
+        helper.assertTrue(golem.getMoveControl().hasWanted(), "Golem should move to intercept the arrow");
         helper.assertTrue(
-                golem.getNavigation().getTargetPos().getX() > villager.blockPosition().getX(),
+                golem.getMoveControl().getWantedX() > villager.getX(),
                 "Golem should move toward the incoming arrow's side of the villager");
         goal.stop();
         golem.discard();

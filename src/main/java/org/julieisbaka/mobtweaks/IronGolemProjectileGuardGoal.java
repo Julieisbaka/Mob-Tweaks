@@ -98,7 +98,7 @@ public class IronGolemProjectileGuardGoal extends Goal {
 
     @Override
     public void stop() {
-        this.golem.getNavigation().stop();
+        this.golem.getMoveControl().setWait();
         this.villager = null;
         this.projectile = null;
         this.guardPosition = null;
@@ -106,7 +106,7 @@ public class IronGolemProjectileGuardGoal extends Goal {
 
     private void moveBetweenThreatAndVillager() {
         if (this.guardPosition != null) {
-            this.golem.getNavigation().moveTo(
+            this.golem.getMoveControl().setWantedPosition(
                     this.guardPosition.x, this.guardPosition.y, this.guardPosition.z, 1.0);
             this.golem.getLookControl().setLookAt(this.villager, 30.0F, 30.0F);
         }
