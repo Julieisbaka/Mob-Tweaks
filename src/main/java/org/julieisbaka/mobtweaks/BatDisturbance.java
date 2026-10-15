@@ -9,11 +9,11 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.gameevent.GameEventListener;
 import net.minecraft.world.level.gameevent.PositionSource;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.RandomSource;
 
 public final class BatDisturbance implements GameEventListener {
     private static final int RANGE = 12;
-    private static final int FLEE_TICKS = 60;
+    private static final int MIN_FLEE_TICKS = 55;
+    private static final int MAX_FLEE_TICKS = 65;
 
     private final Bat bat;
     private final PositionSource positionSource;
@@ -51,7 +51,7 @@ public final class BatDisturbance implements GameEventListener {
         }
         this.bat.setResting(false);
         this.disturbancePosition = sourcePosition;
-        this.fleeTicks = FLEE_TICKS;
+        this.fleeTicks = MIN_FLEE_TICKS + this.bat.getRandom().nextInt(MAX_FLEE_TICKS - MIN_FLEE_TICKS + 1);
         return true;
     }
 

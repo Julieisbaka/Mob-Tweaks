@@ -16,7 +16,7 @@ fabricApi {
     }
 }
 
-processResources {
+tasks.withType(ProcessResources).configureEach {
     def modVersion = project.version
     inputs.property 'version', modVersion
     filesMatching('fabric.mod.json') {

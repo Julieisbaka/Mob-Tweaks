@@ -115,23 +115,36 @@ public class BatGameTests {
     }
 
     @GameTest(padding = 16)
-    public void disturbedBatsResumeNormalBehaviorAfterThreeSeconds(GameTestHelper helper) {
+    public void disturbedBatsFleeForRandomDurationsBetween55And65Ticks(GameTestHelper helper) {
         Bat bat = roostingBat(helper);
         try {
-            helper.getLevel().gameEvent(GameEvent.BLOCK_DESTROY, bat.position().add(2.0, 0.0, 0.0),
-                    GameEvent.Context.of(Blocks.STONE.defaultBlockState()));
+            bat.getRandom().setSeed(9823490L);
             BatDisturbance listener = disturbanceListener(bat);
-            for (int tick = 0; tick < 60; tick++) {
+            Set<Integer> observedDurations = new HashSet<>();
+            for (int trial = 0; trial < 200; trial++) {
                 bat.setResting(true);
-                listener.tick(helper.getLevel());
-                helper.assertTrue(!bat.isResting(), "Bat should remain in flight during its 60-tick escape");
-                helper.assertTrue(helper.getLevel().noCollision(bat,
-                        bat.getBoundingBox().expandTowards(bat.getDeltaMovement())),
-                        "Escape movement must not cross solid blocks");
+                helper.getLevel().gameEvent(GameEvent.BLOCK_DESTROY, bat.position().add(2.0, 0.0, 0.0),
+                        GameEvent.Context.of(Blocks.STONE.defaultBlockState()));
+                helper.assertTrue(!bat.isResting(), "Each disturbance should wake the bat");
+                int duration = 0;
+                for (int tick = 0; tick <= 65; tick++) {
+                    bat.setResting(true);
+                    listener.tick(helper.getLevel());
+                    if (bat.isResting()) {
+                        break;
+                    }
+                    duration++;
+                    helper.assertTrue(helper.getLevel().noCollision(bat,
+                            bat.getBoundingBox().expandTowards(bat.getDeltaMovement())),
+                            "Escape movement must not cross solid blocks");
+                }
+                helper.assertTrue(duration >= 55 && duration <= 65,
+                        "Escape must last 55-65 ticks inclusive, got " + duration);
+                helper.assertTrue(bat.isResting(), "After the escape expires the bat must be able to roost");
+                observedDurations.add(duration);
             }
-            bat.setResting(true);
-            listener.tick(helper.getLevel());
-            helper.assertTrue(bat.isResting(), "After 60 ticks the tweak should no longer prevent roosting");
+            helper.assertTrue(observedDurations.size() == 11,
+                    "Seeded disturbances should exercise every duration from 55 through 65 ticks");
         } finally {
             bat.discard();
         }

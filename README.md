@@ -63,7 +63,7 @@ up a tougher fight. Keep the changes you enjoy and switch off the rest.
 - Bat colony spawning allows **one in three vanilla bat-group selections** to
   proceed, targeting **3-6 bats** per colony. Limited space can produce smaller groups.
 - Roosting bats react to block breaking and explosions within **12 blocks**,
-  flee for **3 seconds**, then return to normal behavior.
+  flee for a random **55-65 ticks** (2.75-3.25 seconds), then return to normal behavior.
 - Timings assume the game is running at 20 ticks per second.
 
 </details>

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "mob_tweaks_test",
-  "version": "1.0.0",
+  "version": "${version}",
   "name": "Mob Tweaks Tests",
   "environment": "*",
   "entrypoints": {
