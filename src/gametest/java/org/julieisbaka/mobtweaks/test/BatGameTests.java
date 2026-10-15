@@ -22,6 +22,7 @@ import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -232,10 +233,16 @@ public class BatGameTests {
             level.setBlockAndUpdate(floor, Blocks.STONE.defaultBlockState());
             level.setBlockAndUpdate(floor.above(4), Blocks.STONE.defaultBlockState());
         }
+        var lightEngine = level.getChunkSource().getLightEngine();
+        var lighting = lightEngine.waitForPendingTasks(center.getX() >> 4, center.getZ() >> 4);
+        lightEngine.tryScheduleUpdate();
         helper.startSequence()
-                .thenWaitUntil(
-                        () ->                         helper.assertTrue(level.getMaxLocalRawBrightness(center) == 0,
-                                "Test cave must be dark, got " + level.getMaxLocalRawBrightness(center)))
+                .thenWaitUntil(() -> helper.assertTrue(lighting.isDone(), "Lighting must finish"))
+                .thenWaitUntil(() -> helper.assertTrue(level.getMaxLocalRawBrightness(center) == 0,
+                        "Test cave must be dark, got " + level.getMaxLocalRawBrightness(center)
+                                + ", sky=" + level.getBrightness(LightLayer.SKY, center)
+                                + ", block=" + level.getBrightness(LightLayer.BLOCK, center)
+                                + ", roof=" + level.getBlockState(center.above(3))))
                 .thenExecute(() -> {
                     ServerPlayer player = (ServerPlayer) helper.makeMockServerPlayer(GameType.SURVIVAL);
                     player.setPos(center.getX() + 48.5, center.getY(), center.getZ() + 0.5);
