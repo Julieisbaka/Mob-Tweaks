@@ -27,7 +27,6 @@ import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import org.julieisbaka.mobtweaks.BatColonySpawning;
 import org.julieisbaka.mobtweaks.BatDisturbance;
 import org.julieisbaka.mobtweaks.MobTweak;
@@ -225,7 +224,7 @@ public class BatGameTests {
         helper.succeed();
     }
 
-    @GameTest(padding = 48, maxTicks = 200)
+    @GameTest(environment = "mob_tweaks_test:bat_cave", padding = 48, maxTicks = 200)
     public void naturalSpawnerCreatesColoniesAndHonorsPlacementPredicate(GameTestHelper helper) {
         var level = helper.getLevel();
         BlockPos center = helper.absolutePos(new BlockPos(3, 3, 3));
