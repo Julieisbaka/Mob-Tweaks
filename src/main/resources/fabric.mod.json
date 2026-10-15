@@ -13,6 +13,7 @@
     "issues": "https://github.com/Julieisbaka/Mob-Tweaks/issues"
   },
   "license": "MIT",
+  "icon": "assets/mob_tweaks/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [

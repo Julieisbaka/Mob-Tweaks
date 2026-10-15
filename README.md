@@ -1,156 +1,155 @@
+![Mob Tweaks - familiar mobs, fresh behavior](docs/images/banner.png)
+
 # Mob Tweaks
 
-A Fabric mod by **JulieISBaka** that adds configurable mob behaviors to
-Minecraft Java Edition **26.3**.
+**Small changes. More personality. A few new surprises.**
 
-## Requirements
+Mob Tweaks gives familiar Minecraft mobs new behaviors: foxes bring berries to
+their kits, villagers heal with food, horses warn their riders, and withers put
+up a tougher fight. Keep the changes you enjoy and switch off the rest.
 
-| Component | Version |
-| --- | --- |
-| Minecraft Java Edition | 26.3 |
-| Java | 25 or newer (Java 25 recommended for development) |
-| Fabric Loader | 0.19.5 or newer |
-| Fabric API | Built and tested with 0.162.0+26.3 |
-| Mob Tweaks | 0.1.0 |
+[Report a bug](https://github.com/Julieisbaka/Mob-Tweaks/issues) ·
+[Changelog](CHANGELOG.md)
 
-This project targets Fabric, not Forge or NeoForge.
+## What's different?
 
-## Installation
+### A little more life
 
-1. Install [Fabric Loader](https://fabricmc.net/use/) for Minecraft 26.3.
-2. Install the matching [Fabric API](https://modrinth.com/mod/fabric-api).
-3. Obtain the Mob Tweaks mod JAR from the repository's
-   [Releases](https://github.com/Julieisbaka/Mob-Tweaks/releases), if a release
-   is available, or [build it from source](#building-and-testing).
-4. Put the mod JAR and Fabric API in the Minecraft instance's `mods` directory
-   (or the server's `mods` directory for a dedicated server).
-5. Start the game or server. Mob Tweaks creates its configuration on first startup.
+- **Fox families:** Adult foxes gather sweet berries and bring them to nearby kits.
+- **Village care:** Baby villagers accept iron golem poppies, and injured villagers
+  eat stored food to slowly recover health.
+- **Colorful shulkers:** Right-click a shulker with dye to change its shell color.
+- **A warning from your horse:** Ridden horses rear and neigh when a hostile mob
+  is behind them, without bucking you off.
 
-Back up existing worlds before adding or updating mods.
+### Smarter friends and foes
 
-## Mob changes
+- **Protective golems:** Iron golems try to step between villagers and incoming
+  hostile projectiles.
+- **Skeleton cover:** Skeletons, strays, and bogged seek cover while reloading bows.
+- **Defensive endermen:** At half health, endermen can place their carried block
+  between themselves and an attacker.
+- **Vex recall:** Vexes return to their evoker when they lose their target or
+  stray too far away.
 
-- **Illusioners:** One joins each raid wave from wave 5 onward.
-- **Baby villagers:** Accept iron golem poppies into their inventories.
-- **Villagers:** Eat stored food to heal half a heart every 4 seconds.
-  Bread restores up to 5 HP, carrots 3 HP, and potatoes or beetroots 1 HP.
-- **Shulkers:** Right-click with a dye to change their shell color.
-- **Withers:**
-  - Spawn with 300 HP on Easy, 450 HP on Normal, and 600 HP on Hard.
-  - Birth explosions deal up to 37 HP on Easy, 72 HP on Normal, and 108 HP
-    on Hard to an unprotected player.
-  - At half health, explode and summon four wither skeletons once.
-  - Dash toward their target after four main-head shots while at half health.
-- **Baby zombies:** Naturally spawned babies and reinforcements have a 15%
-  chance to ride wild wolves, ocelots, wild cats, pigs, sheep, cows,
-  mooshrooms, foxes, pandas, llamas, spiders, cave spiders, horses and their
-  variants, or adult zombies and their variants.
-- **Slimes and magma cubes:** Attack snow golems and can spawn in 2x2x2
-  spaces, choosing a smaller size when needed.
-- **Ravagers:** Crush turtle eggs when charging through them.
-- **Foxes:** Bring sweet berries to nearby kits.
-  Deliveries have a 30-second cooldown at 20 ticks per second (600 ticks).
-- **Vexes:** Return to their evoker when they lose their target or wander too far away.
-- **Iron golems:** Try to move between villagers and incoming hostile projectiles.
-- **Horses:** Rear and neigh when a hostile mob approaches from behind, without bucking the rider.
-- **Skeletons, strays, and bogged:** Seek cover while reloading their bows.
-- **Endermen:** At half health, place a carried block between themselves and an attacker.
+### New challenges
 
-## Configuration
+- **Tougher withers:** Difficulty-based health, adjusted birth explosions, a
+  one-time explosion with four wither skeletons at half health, and a dash attack.
+- **Raid illusioners:** One illusioner joins each raid wave from wave 5 onward.
+- **More baby zombie jockeys:** Eligible babies have a 15% chance to ride nearby
+  animals or adult zombies.
+- **Slimes and magma cubes:** Target snow golems and fit into smaller spawn spaces.
+- **Ravagers:** Crush turtle eggs while charging through them.
 
-Every tweak is enabled by default and has two controls:
+<details>
+<summary>Show the numbers and finer details</summary>
 
-- **Global settings:** Edit `config/mob-tweaks.properties` in the game or server
-  directory, then restart. Set a key to `true` or `false`. Missing keys are added
-  with `true`; invalid boolean values cause startup to fail with an error.
-- **World settings:** Use `/gamerule mob_tweaks:<key> false` to disable a tweak
-  in the world, or `true` to enable it. Commands require permission to change
-  gamerules.
+- Villagers recover **half a heart every 4 seconds** while healing from food.
+  Bread funds up to 5 HP of healing, carrots 3 HP, and potatoes or beetroots 1 HP.
+- Withers start with **300 HP on Easy, 450 HP on Normal, and 600 HP on Hard**.
+  Their birth explosions deal up to 37, 72, or 108 HP respectively to an
+  unprotected player. At half health, they can dash after four main-head shots.
+- Naturally spawned baby zombies and reinforcements can become jockeys. Mounts
+  include wild wolves, ocelots, wild cats, pigs, sheep, cows, mooshrooms, foxes,
+  pandas, llamas, spiders, cave spiders, horses and their variants, and adult
+  zombies and their variants.
+- Slimes and magma cubes can spawn in **2x2x2 spaces**, choosing a smaller size
+  when needed.
+- Fox berry deliveries have a **30-second cooldown**.
+- Timings assume the game is running at 20 ticks per second.
 
-Both controls must be `true` for a tweak to run. A world gamerule cannot override
-a globally disabled setting.
+</details>
 
-For example, to disable fox deliveries globally:
+## Install
 
-```properties
-fox_berry_delivery=false
-```
+You'll need **Minecraft Java Edition 26.3**, **Java 25 or newer**,
+**Fabric Loader 0.19.5 or newer**, and **Fabric API for 26.3**
+(tested with 0.162.0+26.3). Forge and NeoForge are not supported.
 
-Or disable them in the world:
+1. Set up [Fabric Loader](https://fabricmc.net/use/) for Minecraft 26.3.
+2. Download [Fabric API](https://modrinth.com/mod/fabric-api) for the same
+   Minecraft version.
+3. Download the Mob Tweaks mod JAR from its Modrinth project page or you can [build it from source](CONTRIBUTING.md).
+4. Place both JARs in your Minecraft instance's `mods` folder. For a dedicated
+   server, use the server's `mods` folder instead.
+5. Launch the game or server. All tweaks are on by default.
+
+Use the regular mod JAR, not the `-sources.jar` archive.
+**Back up your world before adding or updating mods.**
+
+## Make it your own
+
+Don't want a particular change? Turn it off without losing the others.
+
+**In your world**, use a gamerule command. For example, to disable fox berry
+deliveries:
 
 ```mcfunction
 /gamerule mob_tweaks:fox_berry_delivery false
 ```
 
-| Key | Behavior |
+Replace `false` with `true` to turn it back on. You'll need cheats enabled or
+permission to change gamerules on the server.
+
+**For the whole game instance or server**, edit `config/mob-tweaks.properties`
+after the first launch, then restart:
+
+```properties
+fox_berry_delivery=false
+```
+
+A tweak must be enabled in both places to run. A world command cannot override
+a disabled configuration entry.
+
+<details>
+<summary>All settings</summary>
+
+Use these keys in the properties file or after `/gamerule mob_tweaks:`.
+Every setting defaults to `true`.
+
+| Setting | Controls |
 | --- | --- |
-| `raid_illusioners` | Add an illusioner to raid waves from wave 5 onward |
-| `baby_villager_flowers` | Let baby villagers accept iron golem poppies |
-| `dyeable_shulkers` | Recolor shulkers with dyes |
-| `villager_food_healing` | Let villagers consume stored food to heal |
-| `wither_difficulty_health` | Scale newly created withers' health with difficulty |
-| `wither_birth_explosion` | Adjust wither birth explosion damage |
-| `wither_half_health_reinforcements` | Trigger a one-time explosion and reinforcements at half health |
-| `wither_dash` | Let half-health withers dash after four main-head shots |
-| `baby_zombie_jockeys` | Let eligible baby zombies ride nearby mobs |
-| `cubes_attack_snow_golems` | Let slimes and magma cubes target and damage snow golems |
-| `cubes_small_spawning` | Allow slimes and magma cubes to fit smaller spawn spaces |
-| `ravager_turtle_eggs` | Let charging ravagers crush turtle eggs |
-| `fox_berry_delivery` | Let adult foxes harvest and deliver berries to kits |
-| `vex_recall` | Recall vexes to their evoker |
-| `iron_golem_projectile_guard` | Let iron golems try to intercept hostile projectiles |
-| `horse_rear_warning` | Warn mounted riders about hostile mobs behind their horse |
-| `skeleton_cover` | Let bow-wielding skeletons seek cover while reloading |
-| `enderman_block_defense` | Let low-health endermen place carried blocks defensively |
+| `raid_illusioners` | Illusioners in later raid waves |
+| `baby_villager_flowers` | Baby villagers accepting golem poppies |
+| `dyeable_shulkers` | Dyeing shulker shells |
+| `villager_food_healing` | Villagers healing with stored food |
+| `wither_difficulty_health` | Difficulty-based health for newly created withers |
+| `wither_birth_explosion` | Adjusted wither birth explosion damage |
+| `wither_half_health_reinforcements` | Half-health explosion and reinforcements |
+| `wither_dash` | Wither dash attacks |
+| `baby_zombie_jockeys` | Extra baby zombie mounts |
+| `cubes_attack_snow_golems` | Slimes and magma cubes attacking snow golems |
+| `cubes_small_spawning` | Smaller spawn spaces for slimes and magma cubes |
+| `ravager_turtle_eggs` | Ravagers crushing turtle eggs |
+| `fox_berry_delivery` | Foxes gathering and delivering berries |
+| `vex_recall` | Vexes returning to their evoker |
+| `iron_golem_projectile_guard` | Golems trying to intercept hostile projectiles |
+| `horse_rear_warning` | Mounted horses warning about threats behind them |
+| `skeleton_cover` | Bow-wielding skeletons seeking reload cover |
+| `enderman_block_defense` | Endermen placing defensive blocks |
 
-The vanilla `minecraft:mob_griefing` gamerule also controls fox berry harvesting,
-ravager egg destruction, enderman defensive block placement, and wither block
-destruction. Foxes can still deliver berries they already hold when it is disabled.
-Disabling a tweak does not undo changes already made, such as shulker colors or
-a wither's maximum health.
+Use only `true` or `false` in the properties file. Missing keys are added
+automatically; invalid values prevent startup and produce an error.
 
-## Building and testing
+</details>
 
-Install JDK 25 and make sure `JAVA_HOME` points to it. The Gradle wrapper downloads
-the required Gradle version; no system Gradle installation is needed. The first
-build needs internet access to resolve Minecraft and Fabric dependencies.
+The vanilla `minecraft:mob_griefing` rule also controls fox harvesting, ravager
+egg destruction, enderman block placement, and wither block destruction.
+Foxes can still deliver berries they already hold when it is off.
 
-On Windows (PowerShell):
+Turning a tweak off won't undo changes already made, such as a dyed shulker's
+color or a wither's maximum health.
 
-```powershell
-.\gradlew.bat build
-```
+## Need help or have an idea?
 
-On Linux or macOS:
+Check [existing issues](https://github.com/Julieisbaka/Mob-Tweaks/issues), then
+use the bug-report or feature-request form. For bugs, include your mod and
+Minecraft versions, what happened, and how to reproduce it. Remove personal
+information from logs before sharing them.
 
-```sh
-sh gradlew build
-```
-
-`build` compiles the mod, runs the Fabric server game tests through `check`, and
-creates archives in `build/libs`. Install `mob-tweaks-0.1.0.jar`, not the
-`-sources.jar` archive.
-
-To run just the game-test task on Windows:
-
-```powershell
-.\gradlew.bat runGameTest
-```
-
-On Linux or macOS, use `sh gradlew runGameTest`. Game tests run in a separate
-development server and do not use your normal Minecraft saves.
-
-## Reporting bugs and contributing
-
-Search [existing issues](https://github.com/Julieisbaka/Mob-Tweaks/issues) before
-opening a report. Use the bug-report form and include versions, reproduction
-steps, relevant settings, other installed mods, and sanitized logs or crash reports.
-Use the feature-request form for new ideas.
-
-For code contributions, keep changes focused, add or update game tests for
-behavior changes, and run `build` before opening a pull request. Update this README
-and the [changelog](CHANGELOG.md) when changing documented behavior.
+Want to contribute code? See [Contributing](CONTRIBUTING.md).
 
 ## License
 
-Mob Tweaks is licensed under the [MIT License](LICENSE).
+Code and original project artwork are available under the [MIT License](LICENSE).
