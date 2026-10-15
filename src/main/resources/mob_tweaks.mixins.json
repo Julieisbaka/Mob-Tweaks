@@ -19,7 +19,8 @@
     "IronGolemMixin",
     "AbstractHorseMixin",
     "AbstractSkeletonMixin",
-    "EndermanMixin"
+    "EndermanMixin",
+    "BatMixin"
   ],
   "injectors": {
     "defaultRequire": 1

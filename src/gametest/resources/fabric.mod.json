@@ -13,10 +13,13 @@
       "org.julieisbaka.mobtweaks.test.RavagerGameTests",
       "org.julieisbaka.mobtweaks.test.FoxBerryGameTests",
       "org.julieisbaka.mobtweaks.test.VexAndGolemGameTests",
-      "org.julieisbaka.mobtweaks.test.MobTweakSettingsAndBehaviorGameTests"
+      "org.julieisbaka.mobtweaks.test.MobTweakSettingsAndBehaviorGameTests",
+      "org.julieisbaka.mobtweaks.test.BatGameTests"
     ]
   },
-  "mixins": ["mob_tweaks_test.mixins.json"],
+  "mixins": [
+    "mob_tweaks_test.mixins.json"
+  ],
   "depends": {
     "mob_tweaks": "*",
     "fabric-gametest-api-v1": "*"

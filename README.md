@@ -15,6 +15,9 @@ up a tougher fight. Keep the changes you enjoy and switch off the rest.
 
 ### A little more life
 
+- **Bat colonies:** Bats appear less often, but spawn in small colonies instead
+  of scattered encounters. Roosting bats scatter when nearby blocks break or
+  an explosion goes off.
 - **Fox families:** Adult foxes gather sweet berries and bring them to nearby kits.
 - **Village care:** Baby villagers accept iron golem poppies, and injured villagers
   eat stored food to slowly recover health.
@@ -57,6 +60,10 @@ up a tougher fight. Keep the changes you enjoy and switch off the rest.
 - Slimes and magma cubes can spawn in **2x2x2 spaces**, choosing a smaller size
   when needed.
 - Fox berry deliveries have a **30-second cooldown**.
+- Bat colony spawning allows **one in three vanilla bat-group selections** to
+  proceed, targeting **3-6 bats** per colony. Limited space can produce smaller groups.
+- Roosting bats react to block breaking and explosions within **12 blocks**,
+  flee for **3 seconds**, then return to normal behavior.
 - Timings assume the game is running at 20 ticks per second.
 
 </details>
@@ -128,6 +135,8 @@ Every setting defaults to `true`.
 | `horse_rear_warning` | Mounted horses warning about threats behind them |
 | `skeleton_cover` | Bow-wielding skeletons seeking reload cover |
 | `enderman_block_defense` | Endermen placing defensive blocks |
+| `bat_disturbance_flee` | Roosting bats fleeing block breaking and explosions |
+| `bat_colony_spawning` | Less frequent bat encounters with small colonies |
 
 Use only `true` or `false` in the properties file. Missing keys are added
 automatically; invalid values prevent startup and produce an error.

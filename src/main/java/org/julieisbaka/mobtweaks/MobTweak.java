@@ -9,7 +9,8 @@ public enum MobTweak {
     CUBES_SMALL_SPAWNING("cubes_small_spawning"), RAVAGER_TURTLE_EGGS("ravager_turtle_eggs"),
     FOX_BERRY_DELIVERY("fox_berry_delivery"), VEX_RECALL("vex_recall"),
     IRON_GOLEM_PROJECTILE_GUARD("iron_golem_projectile_guard"), HORSE_REAR_WARNING("horse_rear_warning"),
-    SKELETON_COVER("skeleton_cover"), ENDERMAN_BLOCK_DEFENSE("enderman_block_defense");
+    SKELETON_COVER("skeleton_cover"), ENDERMAN_BLOCK_DEFENSE("enderman_block_defense"),
+    BAT_DISTURBANCE_FLEE("bat_disturbance_flee"), BAT_COLONY_SPAWNING("bat_colony_spawning");
 
     private final String key;
 
