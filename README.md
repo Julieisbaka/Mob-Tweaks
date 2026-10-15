@@ -49,7 +49,7 @@ Back up existing worlds before adding or updating mods.
   spaces, choosing a smaller size when needed.
 - **Ravagers:** Crush turtle eggs when charging through them.
 - **Foxes:** Bring sweet berries to nearby kits.
-  Deliveries have a 30-second cooldown at 20 ticks per second.
+  Deliveries have a 30-second cooldown at 20 ticks per second (600 ticks).
 - **Vexes:** Return to their evoker when they lose their target or wander too far away.
 - **Iron golems:** Try to move between villagers and incoming hostile projectiles.
 - **Horses:** Rear and neigh when a hostile mob approaches from behind, without bucking the rider.
