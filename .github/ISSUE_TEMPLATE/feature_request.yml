@@ -1,0 +1,30 @@
+name: Feature request
+description: Suggest a mob behavior tweak or an improvement.
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: Please search existing issues and read the README before suggesting a feature.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe the gameplay situation or limitation.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Include the affected mobs and how the behavior should work.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Include interactions with existing tweaks or configuration, if relevant.

@@ -41,7 +41,7 @@ public class FoxBerryDeliveryGoal extends Goal {
 
         ItemStack heldItem = this.fox.getItemBySlot(EquipmentSlot.MAINHAND);
         boolean carryingBerries = heldItem.is(Items.SWEET_BERRIES);
-        if (!carryingBerries && this.fox.tickCount < this.nextSearchTick) {
+        if (this.fox.tickCount < this.nextSearchTick) {
             return false;
         }
 
@@ -69,10 +69,12 @@ public class FoxBerryDeliveryGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
+        ItemStack heldItem = this.fox.getItemBySlot(EquipmentSlot.MAINHAND);
         return !this.delivered && this.fox.isAlive() && this.baby != null && this.baby.isAlive() && this.baby.isBaby()
                 && this.baby.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty() && this.fox.getTarget() == null
                 && MobTweaksSettings.isEnabled(this.fox.level(), MobTweak.FOX_BERRY_DELIVERY)
-                && !this.fox.isAggressive() && !this.fox.isSleeping();
+                && !this.fox.isAggressive() && !this.fox.isSleeping() && !this.fox.isSitting()
+                && (heldItem.isEmpty() || heldItem.is(Items.SWEET_BERRIES));
     }
 
     @Override
@@ -91,6 +93,10 @@ public class FoxBerryDeliveryGoal extends Goal {
 
     @Override
     public void tick() {
+        if (!this.canContinueToUse()) {
+            this.delivered = true;
+            return;
+        }
         ItemStack heldItem = this.fox.getItemBySlot(EquipmentSlot.MAINHAND);
         if (!heldItem.is(Items.SWEET_BERRIES)) {
             if (!(this.fox.level() instanceof ServerLevel level)

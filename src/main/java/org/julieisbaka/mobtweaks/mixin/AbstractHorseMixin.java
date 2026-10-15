@@ -40,7 +40,6 @@ abstract class AbstractHorseMixin {
                     return forward.dot(towardThreat) < -0.5;
                 });
         if (threatBehind) {
-            // Revisit whether this warning should ever buck its rider; for now it only rears.
             horse.setStanding(20);
             horse.playSound(horse.getAmbientStandSound(), 0.8F, 1.0F);
             this.mobTweaks$nextRearWarningTick = horse.tickCount + 60;

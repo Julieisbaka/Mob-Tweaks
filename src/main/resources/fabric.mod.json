@@ -7,6 +7,12 @@
   "authors": [
     "JulieISBaka"
   ],
+  "contact": {
+    "homepage": "https://github.com/Julieisbaka/Mob-Tweaks",
+    "sources": "https://github.com/Julieisbaka/Mob-Tweaks",
+    "issues": "https://github.com/Julieisbaka/Mob-Tweaks/issues"
+  },
+  "license": "MIT",
   "environment": "*",
   "entrypoints": {
     "main": [

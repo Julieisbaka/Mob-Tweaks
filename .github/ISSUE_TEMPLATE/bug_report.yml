@@ -1,0 +1,73 @@
+name: Bug report
+description: Report a reproducible problem with Mob Tweaks.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please search existing issues before reporting a bug.
+        Remove personal information, server addresses, and tokens from logs before sharing them.
+  - type: input
+    id: mod-version
+    attributes:
+      label: Mob Tweaks version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: minecraft-version
+    attributes:
+      label: Minecraft version
+      placeholder: "26.3"
+    validations:
+      required: true
+  - type: input
+    id: fabric-versions
+    attributes:
+      label: Fabric Loader and Fabric API versions
+      description: Include the version of each dependency.
+    validations:
+      required: true
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Where does the problem happen?
+      options:
+        - Singleplayer
+        - Dedicated server
+        - Both
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Include mob types, difficulty, or any relevant setup or commands.
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: settings
+    attributes:
+      label: Configuration and other mods
+      description: Include relevant mob-tweaks.properties entries, gamerules, and other installed mods.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs, crash reports, or screenshots
+      description: Attach sanitized latest.log or crash reports, or paste relevant excerpts.

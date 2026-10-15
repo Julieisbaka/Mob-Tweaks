@@ -3,6 +3,7 @@ package org.julieisbaka.mobtweaks;
 import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.LivingEntity;
@@ -35,15 +36,13 @@ public final class SkeletonCoverGoal extends Goal {
         return this.skeleton.level() instanceof ServerLevel
                 && MobTweaksSettings.isEnabled(this.skeleton.level(), MobTweak.SKELETON_COVER)
                 && this.skeleton.isAlive() && this.skeleton.getTarget() != null && this.skeleton.getTarget().isAlive()
-                && this.skeleton.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND).is(Items.BOW)
+                && this.skeleton.getItemBySlot(EquipmentSlot.MAINHAND).is(Items.BOW)
                 && this.skeleton.tickCount < this.reloadUntil && this.coverPosition != null;
     }
 
     @Override
     public boolean canContinueToUse() {
-        LivingEntity target = this.skeleton.getTarget();
-        return MobTweaksSettings.isEnabled(this.skeleton.level(), MobTweak.SKELETON_COVER) && this.skeleton.isAlive()
-                && target != null && target.isAlive() && this.skeleton.tickCount < this.reloadUntil;
+        return this.canUse();
     }
 
     @Override

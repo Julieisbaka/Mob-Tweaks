@@ -184,7 +184,13 @@ public class MobTweakSettingsAndBehaviorGameTests {
                         || skeleton.getMoveControl().getWantedZ() != skeleton.getZ());
         helper.assertTrue(navigationStarted || steeringStarted,
                 "Skeleton should move toward the block that hides it from its target");
+        skeleton.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.STONE_SWORD));
+        helper.assertTrue(!goal.canContinueToUse(), "Switching away from a bow must cancel reload cover");
+        skeleton.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+        helper.assertTrue(goal.canContinueToUse(), "Bow reload cover should remain active before its deadline");
         goal.tick();
+        skeleton.tickCount += 12;
+        helper.assertTrue(!goal.canContinueToUse(), "Reload cover must end after 12 ticks");
         goal.stop();
         skeleton.discard();
         target.discard();
