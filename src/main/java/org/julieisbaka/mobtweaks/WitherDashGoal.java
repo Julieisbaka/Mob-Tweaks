@@ -97,9 +97,9 @@ public final class WitherDashGoal extends Goal {
                     && this.wither.hasLineOfSight(victim) && this.hitEntities.add(victim.getUUID())
                     && victim.hurtServer(level, this.wither.damageSources().mobAttack(this.wither), 30.0F)) {
                 int effectTicks = switch (level.getDifficulty()) {
-                case NORMAL -> 200;
-                case HARD -> 800;
-                default -> 0;
+                    case NORMAL -> 200;
+                    case HARD -> 800;
+                    default -> 0;
                 };
                 if (effectTicks > 0) {
                     victim.addEffect(new MobEffectInstance(MobEffects.WITHER, effectTicks, 1), this.wither);

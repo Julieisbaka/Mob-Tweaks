@@ -388,9 +388,9 @@ public class JockeyAndHealthGameTests {
 
     private static float healthFor(Difficulty difficulty) {
         return switch (difficulty) {
-        case NORMAL -> 450;
-        case HARD -> 600;
-        default -> 300;
+            case NORMAL -> 450;
+            case HARD -> 600;
+            default -> 300;
         };
     }
 

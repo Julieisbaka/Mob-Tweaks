@@ -45,9 +45,9 @@ abstract class WitherBossMixin extends Monster {
             return;
         }
         double health = switch (level.getDifficulty()) {
-        case NORMAL -> 450.0;
-        case HARD -> 600.0;
-        default -> 300.0;
+            case NORMAL -> 450.0;
+            case HARD -> 600.0;
+            default -> 300.0;
         };
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(health);
         this.setHealth(this.getMaxHealth());

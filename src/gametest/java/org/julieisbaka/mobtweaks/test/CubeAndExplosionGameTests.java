@@ -155,9 +155,9 @@ public class CubeAndExplosionGameTests {
                 try {
                     ((WitherBossAccessor) wither).mobTweaks$serverAiStep(helper.getLevel());
                     float expected = switch (difficulty) {
-                    case EASY -> 37;
-                    case HARD -> 108;
-                    default -> 72;
+                        case EASY -> 37;
+                        case HARD -> 108;
+                        default -> 72;
                     };
                     helper.assertTrue(Math.abs((200 - player.getHealth()) - expected) < 0.001,
                             "Birth explosion must deal exactly " + expected + " HP on " + difficulty + ", got "
