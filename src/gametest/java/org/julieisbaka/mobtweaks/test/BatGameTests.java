@@ -22,7 +22,6 @@ import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -162,6 +161,57 @@ public class BatGameTests {
         helper.succeed();
     }
 
+        @GameTest(padding = 16)
+        public void fleeingBatsCanTurnAlongAWallWithoutCrossingIt(GameTestHelper helper) {
+            Bat bat = roostingBat(helper);
+            try {
+                bat.setPos(bat.getBlockX() + bat.getBbWidth() / 2.0, bat.getY(), bat.getZ());
+                BlockPos wall = bat.blockPosition().west();
+                helper.getLevel().setBlockAndUpdate(wall, Blocks.STONE.defaultBlockState());
+                helper.getLevel().setBlockAndUpdate(wall.above(), Blocks.STONE.defaultBlockState());
+                helper.getLevel().setBlockAndUpdate(bat.blockPosition().below(), Blocks.STONE.defaultBlockState());
+                helper.getLevel().gameEvent(GameEvent.BLOCK_DESTROY, bat.position().add(4.0, 0.0, 0.0),
+                        GameEvent.Context.of(Blocks.STONE.defaultBlockState()));
+                bat.setDeltaMovement(-1.0, -1.0, 0.0);
+                disturbanceListener(bat).tick(helper.getLevel());
+                var movement = bat.getDeltaMovement();
+                helper.assertTrue(movement.x == 0.0 && movement.z != 0.0,
+                        "Bat should turn sideways when a wall and floor block its initial escape");
+                helper.assertTrue(helper.getLevel().noCollision(bat, bat.getBoundingBox().expandTowards(movement)),
+                        "Escape movement must not carry the bat through the wall or floor");
+            } finally {
+                bat.discard();
+            }
+            helper.succeed();
+        }
+
+        @GameTest
+        public void colonySelectionLeavesOtherMobsAndTheirRandomnessUnchanged(GameTestHelper helper) {
+            var level = helper.getLevel();
+            var rule = MobTweaksGameRules.get(MobTweak.BAT_COLONY_SPAWNING);
+            boolean original = level.getGameRules().get(rule);
+            RandomSource enabled = RandomSource.create(12345L);
+            RandomSource disabled = RandomSource.create(12345L);
+            BlockPos pos = helper.absolutePos(new BlockPos(3, 3, 3));
+            var generator = level.getChunkSource().getGenerator();
+            try {
+                for (int attempt = 0; attempt < 100; attempt++) {
+                    level.getGameRules().set(rule, true, level.getServer());
+                    var withColonies = NaturalSpawnerAccessor.mobTweaks$selectSpawn(level, level.structureManager(),
+                            generator, MobCategory.MONSTER, enabled, pos);
+                    level.getGameRules().set(rule, false, level.getServer());
+                    var withoutColonies = NaturalSpawnerAccessor.mobTweaks$selectSpawn(level, level.structureManager(),
+                            generator, MobCategory.MONSTER, disabled, pos);
+                    helper.assertTrue(withColonies.isPresent() && withColonies.equals(withoutColonies),
+                            "Colony spawning must not change other mob selections");
+                }
+                helper.assertTrue(enabled.nextLong() == disabled.nextLong(),
+                        "Selecting non-bat mobs must not consume extra randomness");
+            } finally {
+                level.getGameRules().set(rule, original, level.getServer());
+            }
+            helper.succeed();
+        }
     @GameTest
     public void colonySpawningDoesNotAffectOtherSpawnReasonsOrDisabledBats(GameTestHelper helper) {
         Bat bat = createMob(helper, EntityTypes.BAT);
@@ -232,16 +282,9 @@ public class BatGameTests {
             level.setBlockAndUpdate(floor, Blocks.STONE.defaultBlockState());
             level.setBlockAndUpdate(floor.above(4), Blocks.STONE.defaultBlockState());
         }
-        var lightEngine = level.getChunkSource().getLightEngine();
-        var lighting = lightEngine.waitForPendingTasks(center.getX() >> 4, center.getZ() >> 4);
-        lightEngine.tryScheduleUpdate();
         helper.startSequence()
-                .thenWaitUntil(() -> helper.assertTrue(lighting.isDone(), "Lighting must finish"))
                 .thenWaitUntil(() -> helper.assertTrue(level.getMaxLocalRawBrightness(center) == 0,
-                        "Test cave must be dark, got " + level.getMaxLocalRawBrightness(center)
-                                + ", sky=" + level.getBrightness(LightLayer.SKY, center)
-                                + ", block=" + level.getBrightness(LightLayer.BLOCK, center)
-                                + ", roof=" + level.getBlockState(center.above(3))))
+                        "Test cave must be dark, got " + level.getMaxLocalRawBrightness(center)))
                 .thenExecute(() -> {
                     ServerPlayer player = (ServerPlayer) helper.makeMockServerPlayer(GameType.SURVIVAL);
                     player.setPos(center.getX() + 48.5, center.getY(), center.getZ() + 0.5);

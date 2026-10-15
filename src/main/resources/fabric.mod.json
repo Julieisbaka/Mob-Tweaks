@@ -3,7 +3,7 @@
   "id": "mob_tweaks",
   "version": "${version}",
   "name": "Mob Tweaks",
-  "description": "Mob behavior tweaks for raids, villagers, withers, foxes, vexes, golems, skeletons, horses, and endermen.",
+  "description": "Mob behavior tweaks for raids, villagers, withers, foxes, vexes, golems, skeletons, horses, endermen, and bats.",
   "authors": [
     "JulieISBaka"
   ],

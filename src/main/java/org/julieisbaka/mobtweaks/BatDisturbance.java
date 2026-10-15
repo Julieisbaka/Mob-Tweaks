@@ -9,6 +9,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.gameevent.GameEventListener;
 import net.minecraft.world.level.gameevent.PositionSource;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.RandomSource;
 
 public final class BatDisturbance implements GameEventListener {
     private static final int RANGE = 12;
@@ -75,12 +76,12 @@ public final class BatDisturbance implements GameEventListener {
         Vec3[] escapeDirections = {
                 away.add(0.0, -0.1, 0.0),
                 away.add(0.0, 0.2, 0.0),
-                new Vec3(-away.z, -0.1, away.x),
-                new Vec3(away.z, -0.1, -away.x),
+                new Vec3(-away.z, 0.0, away.x),
+                new Vec3(away.z, 0.0, -away.x),
                 new Vec3(0.0, -0.3, 0.0)
         };
         for (Vec3 direction : escapeDirections) {
-            Vec3 movement = this.bat.getDeltaMovement().scale(0.5).add(direction.scale(0.5));
+            Vec3 movement = direction.scale(0.5);
             if (level.hasChunk(SectionPos.blockToSectionCoord(this.bat.getX() + movement.x),
                     SectionPos.blockToSectionCoord(this.bat.getZ() + movement.z))
                     && level.noCollision(this.bat, this.bat.getBoundingBox().expandTowards(movement))) {

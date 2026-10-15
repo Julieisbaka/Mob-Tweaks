@@ -1,5 +1,6 @@
 {
-  "type": "minecraft:clock_time",
-  "clock": "minecraft:overworld",
-  "time": 18000
+  "type": "minecraft:timeline_attributes",
+  "timelines": [
+    "mob_tweaks_test:bat_cave"
+  ]
 }
