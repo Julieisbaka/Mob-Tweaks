@@ -128,7 +128,9 @@ Every setting defaults to `true`.
 | `baby_zombie_jockeys` | Extra baby zombie mounts |
 | `cubes_attack_snow_golems` | Slimes and magma cubes attacking snow golems |
 | `cubes_small_spawning` | Smaller spawn spaces for slimes and magma cubes |
-| `ravager_turtle_eggs` | Ravagers crushing turtle eggs |
+| `ravager_turtle_eggs` | Ravagers crushing turtle eggs (legacy setting, retained for compatibility) |
+| `ravager_trampling` | Ravagers trampling fragile blocks while charging |
+| `ravager_plant_damage_immunity` | Ravagers ignoring sweet berry bush and cactus damage and wither rose effects |
 | `fox_berry_delivery` | Foxes gathering and delivering berries |
 | `vex_recall` | Vexes returning to their evoker |
 | `iron_golem_projectile_guard` | Golems trying to intercept hostile projectiles |
@@ -144,7 +146,7 @@ automatically; invalid values prevent startup and produce an error.
 </details>
 
 The vanilla `minecraft:mob_griefing` rule also controls fox harvesting, ravager
-egg destruction, enderman block placement, and wither block destruction.
+egg crushing and block trampling, enderman block placement, and wither block destruction.
 Foxes can still deliver berries they already hold when it is off.
 
 Turning a tweak off won't undo changes already made, such as a dyed shulker's

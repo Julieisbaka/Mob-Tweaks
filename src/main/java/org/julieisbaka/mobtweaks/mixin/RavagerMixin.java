@@ -9,7 +9,10 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Ravager;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.phys.AABB;
 import org.julieisbaka.mobtweaks.MobTweak;
@@ -37,8 +40,12 @@ abstract class RavagerMixin extends Raider {
     @Inject(method = "aiStep", at = @At("TAIL"))
     private void mobTweaks$crushEggs(CallbackInfo ci) {
         if (!(this.level() instanceof ServerLevel level) || !this.isAlive() || this.isNoAi() || this.isImmobile()
-                || this.getTarget() == null || !MobTweaksSettings.isEnabled(level, MobTweak.RAVAGER_TURTLE_EGGS)
-                || !level.getGameRules().get(GameRules.MOB_GRIEFING)) {
+                || this.getTarget() == null || !level.getGameRules().get(GameRules.MOB_GRIEFING)) {
+            return;
+        }
+        boolean crushEggs = MobTweaksSettings.isEnabled(level, MobTweak.RAVAGER_TURTLE_EGGS);
+        boolean trampleBlocks = MobTweaksSettings.isEnabled(level, MobTweak.RAVAGER_TRAMPLING);
+        if (!crushEggs && !trampleBlocks) {
             return;
         }
         AABB before = this.mobTweaks$beforeMovement;
@@ -51,9 +58,20 @@ abstract class RavagerMixin extends Raider {
         AABB path = before.minmax(after).inflate(0.0, 0.25, 0.0);
         for (BlockPos pos : BlockPos.betweenClosed(Mth.floor(path.minX), Mth.floor(path.minY), Mth.floor(path.minZ),
                 Mth.floor(path.maxX), Mth.floor(path.maxY), Mth.floor(path.maxZ))) {
-            if (level.getBlockState(pos).is(Blocks.TURTLE_EGG) && level.destroyBlock(pos, false, this)) {
+            BlockState state = level.getBlockState(pos);
+            if (crushEggs && state.is(Blocks.TURTLE_EGG) && level.destroyBlock(pos, false, this)) {
                 level.playSound(null, pos, SoundEvents.TURTLE_EGG_BREAK, SoundSource.BLOCKS, 0.7F, 1.0F);
+            } else if (trampleBlocks && mobTweaks$isTrampleable(state)) {
+                level.destroyBlock(pos, false, this);
             }
         }
+    }
+
+    @Unique
+    private static boolean mobTweaks$isTrampleable(BlockState state) {
+        Block block = state.getBlock();
+        return state.is(BlockTags.LEAVES) || block == Blocks.CHORUS_FLOWER || block == Blocks.CHORUS_PLANT
+                || block == Blocks.AZALEA || block == Blocks.FLOWERING_AZALEA || block == Blocks.CARVED_PUMPKIN
+                || block == Blocks.JACK_O_LANTERN || block == Blocks.MELON || block == Blocks.PUMPKIN;
     }
 }
